@@ -1,0 +1,11 @@
+<section id="board" data-board-id="<%= @board.id %>" data-initial-presences="<%= @current_presences %>">
+  <section class="tiles">
+  </section>
+</section>
+<section id="matches">
+  
+</section>
+<section id="presences">
+  <%= @current_presences %>
+
+</section>

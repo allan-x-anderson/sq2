@@ -1,0 +1,9 @@
+<h1>Admin:</h1>
+
+<h2>Boards</h2>
+<%= for board <- @boards do %>
+  <p>
+    <%= board.name %>: <%= board.slug %>
+  </p>
+
+<% end %>

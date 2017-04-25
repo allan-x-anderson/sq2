@@ -1,0 +1,14 @@
+<%= form_tag("/join", method: :post, class: "join form") do %>
+  <h1>T[r]ILES</h1>
+  <div class="form-input-group">
+    <label for="name">your name </label>
+    <input id="name" type="text" name="player[name]" value="">
+  </div>
+  <div class="form-input-group">
+    <label for="slug">game name </label>
+    <input id="game_slug" type="text" name="board[slug]" value="">
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-go">Alllrighty Then!</button>
+  </div>
+<% end %>

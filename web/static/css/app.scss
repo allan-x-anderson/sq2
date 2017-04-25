@@ -1,0 +1,46 @@
+@import 'variables';
+@import 'reset';
+@import 'animista';
+@import 'typography';
+@import 'forms';
+@import 'tiles';
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  background: $ta-blue-dark;
+}
+
+main {
+  width: 1027px;
+  margin: 0 auto;
+}
+
+.join.form {
+  h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+  }
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  padding: 2em;
+  color: #fff;
+  margin-top: 25%;
+  background: $ta-blue-medium;
+  box-shadow: 4px 4px 0 $ta-camo-green;
+  border-radius: 4px;
+}
+
+#board {
+  background: #ececec;
+  padding: 20px;
+  height: 140px;
+  overflow: hidden;
+}

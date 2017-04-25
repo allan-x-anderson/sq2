@@ -1,0 +1,3 @@
+<section>
+  <div id="blue" class="tile tile-blue"></div><div id="red" class="tile tile-red"></div><div id="yellow" class="tile tile-yellow"></div><div id="green" class="tile tile-green"></div>
+</section>
