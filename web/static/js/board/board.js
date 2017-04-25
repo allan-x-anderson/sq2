@@ -5,16 +5,27 @@ import moment from 'moment'
 const ANIMATE_IN_CLASS = "slide-in-right";
 const ANIMATE_OUT_CLASS = "slide-out-left";
 const ANIMATE_MATCH_CLASS = "fade-out-fwd";
+const ANIMATE_HERO_IN_CLASS = "bounce-in-fwd";
+const ANIMATE_HERO_OUT_CLASS = "fade-out-fwd";
+const ANIMATE_DOUBLE_MATCH_OUT_CLASS = "fadeOut";
 
 const CONSIDER_GROUPED_WITHIN_MS = 1000;
 const MATCH_ANIMATION_TIME = 300;
+const HERO_SHOW_TIME = 1500;
+
+const MATCH_HERO_IMAGES = {
+  single_color_blue: "cute-cat",
+  single_color_red: "jumping-cat",
+  single_color_yellow: "adorable-cat",
+  single_color_green: "grey-cat",
+}
 
 function getTileWidth(numPlayers){
   return 100 / numPlayers + "%"
 }
 
 function updateTileSize(numPlayers) {
-  $('.tile').css({
+  $('#board .tile').css({
     width: getTileWidth(numPlayers)
   })
 }
@@ -59,6 +70,7 @@ function groupTimings(tiles) {
   })
   return groupedTiles
 }
+
 function updateBoardTiles (tile, currTiles, maxTiles) {
   let currentTiles = _.reject(currTiles, t => t.state == "outgoing")
   currentTiles = stripIncomingState(currentTiles)
@@ -102,21 +114,62 @@ function renderTile(tile, maxTiles){
   return $el
 }
 
-function renderTiles(tiles, maxTiles, containerSelector, prepend = false) {
+function renderTiles(tiles, maxTiles, containerSelector) {
   let tileEls = tiles.map( tile => {
     return renderTile(tile, maxTiles)
   })
-  if(prepend){
-    $(containerSelector).prepend(tileEls)
+  $(containerSelector).html(tileEls)
+}
+
+function renderMatchedTiles(tiles, maxTiles, containerSelector, alreadyFound, foundMatch) {
+  console.log(alreadyFound, foundMatch);
+  let tileEls = tiles.map( tile => {
+    return renderTile(tile, maxTiles)
+  })
+  const $set = $('<div></div>').addClass('matched-tiles-set')
+  $set.append(tileEls)
+  $(containerSelector).prepend($set)
+  if(alreadyFound && foundMatch && alreadyFound[foundMatch]){
+    $set.addClass('animated ' + ANIMATE_DOUBLE_MATCH_OUT_CLASS)
+    setTimeout(() => {
+      $set.remove()
+    }, MATCH_ANIMATION_TIME )
+  }
+}
+
+function renderMatchHero(match) {
+  let html = `
+    <div class='match-hero'>
+      <div class='match-hero-tiles'></div>
+      <div class='match-hero-image'>
+        <img src='/images/match_heroes/${MATCH_HERO_IMAGES[match]}.png' />
+      </div>
+    </div>
+  `
+  let $el = $(html)
+  $("#match-hero").removeClass('hide')
+  $el.addClass('animated ' + ANIMATE_HERO_IN_CLASS)
+  $("#match-hero").append($el)
+}
+
+function removeMatchHero(opts = { immediate: false }) {
+  if(opts.immediate) {
+    $('.match-hero').remove()
+    $("#match-hero").addClass('hide')
   } else {
-    $(containerSelector).html(tileEls)
+    setTimeout(() => {
+      $('.match-hero').addClass('animated ' + ANIMATE_HERO_OUT_CLASS)
+      setTimeout(() => {
+        $('.match-hero').remove()
+        $("#match-hero").addClass('hide')
+      }, MATCH_ANIMATION_TIME )
+    }, HERO_SHOW_TIME)
   }
 }
 
 function renderStaggeredTiles(tiles, maxTiles, containerSelector) {
   $(containerSelector).html("")
   let tileEls = tiles.map( (tile, idx) => {
-     console.log(tile, idx);
      setTimeout( ()=> {
        $(containerSelector).append(renderTile(tile, maxTiles))
      }, idx * 50)
@@ -153,9 +206,9 @@ function initListeners(channel, board) {
     tile.press_duration = moment(tile.pressed_end).diff(moment(tile.pressed_start))
     board.tiles = updateBoardTiles(tile, board.tiles, board.connectedPlayersCount)
     let matchTiles = _.reject(board.tiles, t => t.state == "outgoing")
-    let found_match = checkMatch(matchTiles, board.connectedPlayersCount)
-    if(found_match){
-      board.matches[found_match] = board.tiles
+    let foundMatch = checkMatch(matchTiles, board.connectedPlayersCount)
+    if(foundMatch){
+      removeMatchHero({immediate: true});
       let matchingTiles = _.map(_.cloneDeep(matchTiles), (t) => {
         t.state = "match"
         return t
@@ -165,16 +218,21 @@ function initListeners(channel, board) {
         return t
       })
       renderStaggeredTiles(matchingTiles, board.connectedPlayersCount, '#board')
-      setTimeout(()=> {
-        board.tiles = []
+
+      renderMatchHero(foundMatch)
+      removeMatchHero();
+      renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '.match-hero .match-hero-tiles')
+      board.tiles = []
+      window.setTimeout(()=> {
         renderTiles(board.tiles, board.connectedPlayersCount, '#board')
-        renderTiles(matchedTiles, board.connectedPlayersCount, '#matches', true)
+        renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '#matches', board.matches, foundMatch)
+        board.matches[foundMatch] = matchTiles
       }, MATCH_ANIMATION_TIME)
+
     } else {
       renderTiles(board.tiles, board.connectedPlayersCount, '#board')
     }
   })
-  console.log(channel);
 }
 
 export function initBoard(channel) {
@@ -183,7 +241,7 @@ export function initBoard(channel) {
     connectedPlayers: initialPresences,
     connectedPlayersCount: Object.keys(initialPresences).length,
     tiles: [],
-    matches: []
+    matches: {}
   }
   updateTileSize(board.connectedPlayersCount)
   initListeners(channel, board)

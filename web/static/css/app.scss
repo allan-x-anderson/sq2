@@ -1,24 +1,39 @@
 @import 'variables';
 @import 'reset';
 @import 'animista';
+@import 'animate';
 @import 'typography';
 @import 'forms';
 @import 'tiles';
 
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 *, *:before, *:after {
   box-sizing: inherit;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background: $ta-blue-dark;
+  height: 100%;
 }
 
 main {
-  width: 1027px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  // width: 1027px;
+  // margin: 0 auto;
+}
+
+#debug {
+  color: #ececec;
+  background: #111;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
 .join.form {
@@ -38,9 +53,45 @@ main {
   border-radius: 4px;
 }
 
+$board-height: 140px;
+.supervisor-left {
+  width: 65%;
+  float: left;
+}
+.supervisor-right {
+  margin-left: 3%;
+  width: 32%;
+  float: left;
+  height: 100%;
+}
+
 #board {
+  height: $board-height;
+  margin-bottom: 1em;
+  padding: 20px;
+  overflow: hidden;
+  background: #ececec;
+}
+
+#match-hero {
+  padding: 1em;
+  background: #ccc;
+  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 22%;
+  img {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+}
+
+#matches {
+  @extend .group;
   background: #ececec;
   padding: 20px;
-  height: 140px;
-  overflow: hidden;
+  .tile {
+    height: $tile-height * 0.33;
+  }
+  height: 100%;
 }

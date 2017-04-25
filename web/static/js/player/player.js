@@ -4,8 +4,8 @@ window.Hammer = Hammer.default;
 
 //POOR = blocked role atm
 const BLOCKED_ROLE = "rich";
-const TILE_WIDTH = $('.tile').first().width();
-const TILE_HEIGHT = $('.tile').first().height();
+const TILE_WIDTH = $('.tile').first().outerWidth();
+const TILE_HEIGHT = $('.tile').first().outerHeight();
 
 function checkBlocked (currentPlayer, playedTiles, maxTiles){
   if (currentPlayer && currentPlayer.role === BLOCKED_ROLE) {
@@ -20,7 +20,6 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
 function block (currentPlayer){
   console.log("BLOCKED");
   $('.block-play').html(currentPlayer.queue.length).removeClass('hide')
-  console.log(currentPlayer);
 }
 
 function unblock (currentPlayer){
@@ -89,7 +88,6 @@ function initListeners(channel, board, currentPlayer) {
     $(el).on('touchstart, mousedown', function(e) {
       pauseEvent(e)
       if(window.clicked){
-        console.log(window.clicked);
         window.clearInterval(window.pressEscalationTimer)
 
         window.clicked.css({
@@ -140,22 +138,6 @@ function initListeners(channel, board, currentPlayer) {
     }
     window.clicked = undefined
   });
-
-  // $('.tile').on("click", e => {
-  //   // console.log(e);
-  //   let tile = {
-  //     color: $(e.target).attr('id'),
-  //     pressed_at: new Date()
-  //   }
-  //   let payload = {tile: tile, player_id: currentPlayer.id}
-  //   channel.push("tile-pressed", payload)
-  //   //reset queue because they can play
-  //   currentPlayer.queue = []
-  //   currentPlayer.queue.push(payload)
-  //   if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
-  //     block(currentPlayer);
-  //   }
-  // })
 }
 export function initPlayer(channel) {
   let initialPresences = $('#current-player').data('initial-presences')

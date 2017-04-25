@@ -425,3 +425,14 @@ template {
 [hidden] {
   display: none;
 }
+
+.hide {
+  display: none;
+  visibility: hidden;
+}
+
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
+}

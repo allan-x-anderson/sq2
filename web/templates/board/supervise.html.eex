@@ -1,11 +1,18 @@
-<section id="board" data-board-id="<%= @board.id %>" data-initial-presences="<%= @current_presences %>">
-  <section class="tiles">
+<section id="debug">
+  <% presence_ids = Map.keys(Poison.decode! @current_presences) %>
+  Connected: <%= length Map.keys(Poison.decode! @current_presences) %> (<%= Enum.join presence_ids, "," %>)
+</section>
+<section class="supervisor-left">
+  <section id="board" data-board-id="<%= @board.id %>" data-initial-presences="<%= @current_presences %>">
+    <section class="tiles">
+    </section>
+  </section>
+  <section id="match-hero" class="hide">
+
   </section>
 </section>
-<section id="matches">
-  
-</section>
-<section id="presences">
-  <%= @current_presences %>
+<section class="supervisor-right">
+  <section id="matches">
 
+  </section>
 </section>
