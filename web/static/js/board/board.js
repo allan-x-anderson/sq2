@@ -18,6 +18,8 @@ const MATCH_HERO_IMAGES = {
   single_color_red: "jumping-cat",
   single_color_yellow: "adorable-cat",
   single_color_green: "grey-cat",
+  alternating_colors_blue_yellow: "europe-collage",
+  alternating_colors_yellow_blue: "europe-space-night"
 }
 
 function getTileWidth(numPlayers){
@@ -36,6 +38,30 @@ function checkMatch(tiles, maxTiles){
     let singleColorMatch = _.every(tiles, ['color', tiles[0].color])
     if( singleColorMatch ) {
       return "single_color_"+tiles[0].color
+    }
+
+    let firstColor = tiles[0].color
+    let secondColor = tiles[1].color
+    let oneTwoOneTwo = true
+    if(firstColor != secondColor){
+      _.each(tiles, (tile, idx) => {
+        console.log(tile, idx, idx % 2)
+        if(idx % 2 === 0) {
+          if(tile.color != firstColor){
+            oneTwoOneTwo = false
+          }
+        } else {
+          if(tile.color != secondColor) {
+            oneTwoOneTwo = false
+          }
+        }
+      })
+    } else {
+      oneTwoOneTwo = false
+    }
+
+    if(oneTwoOneTwo == true) {
+      return `alternating_colors_${firstColor}_${secondColor}`
     }
   }
 }

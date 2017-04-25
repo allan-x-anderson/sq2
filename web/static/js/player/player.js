@@ -6,6 +6,13 @@ window.Hammer = Hammer.default;
 const BLOCKED_ROLE = "rich";
 const TILE_WIDTH = $('.tile').first().outerWidth();
 const TILE_HEIGHT = $('.tile').first().outerHeight();
+const LONG_PRESS_INTERVAL = 100
+const ESCALATE_STAGE_1_CLASS = 'pulse'
+const ESCALATE_STAGE_2_CLASS = 'wobble'
+
+const AFTER_PRESS_ANIMATION_TIME = 200
+const AFTER_PRESS_ANIMATION_IN_CLASS = 'zoomOut'
+const AFTER_PRESS_ANIMATION_OUT_CLASS = 'zoomIn'
 
 function checkBlocked (currentPlayer, playedTiles, maxTiles){
   if (currentPlayer && currentPlayer.role === BLOCKED_ROLE) {
@@ -43,11 +50,35 @@ function pauseEvent(e){
     return false;
 }
 
-function escalateLongPress(el){
-  $(el).css({
-    width: $(el).width() + 1,
-    height: $(el).width() + 1
-  })
+function escalateLongPress(el, pressedDuration){
+  if(pressedDuration > 1000) {
+    $(el).addClass('animated animated-loop');
+    $(el).addClass(ESCALATE_STAGE_1_CLASS);
+  }
+  if (pressedDuration > 2000) {
+    $(el).addClass(ESCALATE_STAGE_2_CLASS);
+  }
+}
+
+function deEscalateLongPress(el) {
+  $(el).removeClass('animated animated-loop')
+  $(el).removeClass(ESCALATE_STAGE_1_CLASS)
+  $(el).removeClass(ESCALATE_STAGE_2_CLASS)
+}
+
+function afterPressAnimation(el) {
+  $(el).addClass('animated animated-after-press')
+  $(el).addClass(AFTER_PRESS_ANIMATION_IN_CLASS)
+
+  setTimeout(()=> {
+    $(el).removeClass(AFTER_PRESS_ANIMATION_IN_CLASS)
+    $(el).addClass(AFTER_PRESS_ANIMATION_OUT_CLASS)
+  }, AFTER_PRESS_ANIMATION_TIME)
+
+  setTimeout(()=> {
+    $(el).removeClass('animated animated-after-press')
+    $(el).removeClass(AFTER_PRESS_ANIMATION_OUT_CLASS)
+  }, AFTER_PRESS_ANIMATION_TIME * 2)
 }
 
 function initListeners(channel, board, currentPlayer) {
@@ -87,6 +118,8 @@ function initListeners(channel, board, currentPlayer) {
 
     $(el).on('touchstart, mousedown', function(e) {
       pauseEvent(e)
+      //Just in case
+      deEscalateLongPress($el)
       if(window.clicked){
         window.clearInterval(window.pressEscalationTimer)
 
@@ -98,7 +131,11 @@ function initListeners(channel, board, currentPlayer) {
       let $el = $(e.target)
       $el.data('original-xy', {width: $el.width(), height: $el.height()})
 
-      window.pressEscalationTimer = window.setInterval( ()=> escalateLongPress($el), 50)
+      let pressedFor = 0
+      window.pressEscalationTimer = window.setInterval( ()=> {
+        pressedFor += LONG_PRESS_INTERVAL
+        escalateLongPress($el, pressedFor)
+      }, LONG_PRESS_INTERVAL)
       //Reset the prev data
       $el.data('tile', '')
       let tile = {
@@ -113,16 +150,11 @@ function initListeners(channel, board, currentPlayer) {
 
   $(document).on('touchend, mouseup', function(e) {
     if(window.clicked){
-      console.log(window.clicked.data('tile'));
       window.clearInterval(window.pressEscalationTimer)
 
       let $el = window.clicked
-      $el.css({
-        width: TILE_WIDTH,
-        height: TILE_HEIGHT
-      })
-
-      console.log(e);
+      deEscalateLongPress($el)
+      afterPressAnimation($el)
 
       let tile = $el.data('tile')
       tile.pressed_end = new Date()
