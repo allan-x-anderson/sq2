@@ -1,7 +1,9 @@
+<section id="debug">
+  <%= Poison.encode! @player %>
+</section>
 <div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= @current_presences %>">
   <%= Poison.encode! @player %>
 </div>
-<!-- <h1><%= List.first(@board.players).name %></h1> -->
 <section id="player-hand"><div id="blue" class="tile tile-blue"></div><div id="red" class="tile tile-red"></div><div id="yellow" class="tile tile-yellow"></div><div id="green" class="tile tile-green"></div></section>
 
 <div class="block-play hide"></div>

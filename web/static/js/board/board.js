@@ -1,4 +1,5 @@
 import {Presence} from "phoenix"
+import {createJdenticon} from "../utils/utils"
 import moment from 'moment'
 
 
@@ -131,26 +132,31 @@ function pressDurationClasses(tile) {
   }
 }
 
-function renderTile(tile, maxTiles){
-  let $el = $('<div class="tile board-tile"></div>')
+function renderTile(tile, maxTiles, withJendicon = false){
+  let $el = $(`<div class="tile board-tile"></div>`)
   .addClass('tile-' + tile.color + " " + getAnimationClass(tile) + " " + tile.group_classes + " " + pressDurationClasses(tile))
   .css({
     width: getTileWidth(maxTiles)
   })
+  if(withJendicon) {
+    let jdenticonString = `<div class='tile-jdenticon'>${createJdenticon(tile.player_id.toString(), 30)}</div>`
+    $el.append($(jdenticonString))
+  }
   return $el
 }
 
-function renderTiles(tiles, maxTiles, containerSelector) {
+function renderTiles(tiles, maxTiles, containerSelector, withJendicon) {
   let tileEls = tiles.map( tile => {
-    return renderTile(tile, maxTiles)
+    return renderTile(tile, maxTiles, withJendicon)
   })
   $(containerSelector).html(tileEls)
 }
 
-function renderMatchedTiles(tiles, maxTiles, containerSelector, alreadyFound, foundMatch) {
+//TODO replace withJendicon with jdenticon opts that should look like {to_hash: "a tstin", size: y}
+function renderMatchedTiles(tiles, maxTiles, containerSelector, alreadyFound, foundMatch, withJendicon) {
   console.log(alreadyFound, foundMatch);
   let tileEls = tiles.map( tile => {
-    return renderTile(tile, maxTiles)
+    return renderTile(tile, maxTiles, withJendicon)
   })
   const $set = $('<div></div>').addClass('matched-tiles-set')
   $set.append(tileEls)
@@ -209,13 +215,24 @@ function renderPresence(connectedPlayers) {
   })
 }
 
+function trimTiles (board) {
+  if(board.tiles.length > 0) {
+    let sizeDifference = board.tiles.length - board.connectedPlayersCount
+    console.log("SIZE DIFF", sizeDifference);
+    if(sizeDifference > 0) {
+      board.tiles.splice(0, sizeDifference)
+      $('.tile.board-tile').length
+      $('.tile.board-tile').slice(0, sizeDifference).remove()
+    }
+  }
+}
 function initListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderPresence(board.connectedPlayers)
     updateTileSize(board.connectedPlayersCount)
-    console.log(board);
+    trimTiles(board)
   })
 
   channel.on("presence_diff", diff => {
@@ -223,12 +240,15 @@ function initListeners(channel, board) {
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderPresence(board.connectedPlayers)
     updateTileSize(board.connectedPlayersCount)
-    console.log(board);
+    trimTiles(board)
   })
 
   channel.on("tile-pressed", payload => {
     console.log(payload);
     let tile = payload.tile
+    //TODO attach the player to the tile when they press it.
+    tile.player_id = payload.player_id
+
     tile.press_duration = moment(tile.pressed_end).diff(moment(tile.pressed_start))
     board.tiles = updateBoardTiles(tile, board.tiles, board.connectedPlayersCount)
     let matchTiles = _.reject(board.tiles, t => t.state == "outgoing")
@@ -243,21 +263,24 @@ function initListeners(channel, board) {
         t.state = "matched"
         return t
       })
-      renderStaggeredTiles(matchingTiles, board.connectedPlayersCount, '#board')
+      renderStaggeredTiles(matchingTiles, board.connectedPlayersCount, '#board', true)
 
       renderMatchHero(foundMatch)
+      //Is delayed
       removeMatchHero();
-      renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '.match-hero .match-hero-tiles')
+      renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '.match-hero .match-hero-tiles', undefined, undefined, true)
       board.tiles = []
       window.setTimeout(()=> {
-        renderTiles(board.tiles, board.connectedPlayersCount, '#board')
+        renderTiles(board.tiles, board.connectedPlayersCount, '#board', true)
         renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '#matches', board.matches, foundMatch)
         board.matches[foundMatch] = matchTiles
       }, MATCH_ANIMATION_TIME)
 
     } else {
-      renderTiles(board.tiles, board.connectedPlayersCount, '#board')
+      renderTiles(board.tiles, board.connectedPlayersCount, '#board', true)
     }
+    // TODO not at all performant, it needs to only update on the new tile.
+    jdenticon();
   })
 }
 

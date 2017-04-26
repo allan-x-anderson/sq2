@@ -12,6 +12,7 @@ $tile-green: #7BDE7A;
   width: 100px;
   height: 100px;
   display: inline-block;
+  position: relative;
   // margin-right: 10px;
   // border-radius: 4px;
   &.tile-blue {
@@ -79,6 +80,11 @@ $tile-green: #7BDE7A;
 .tile.animated-after-press {
   animation-iteration-count: 1;
   animation-duration: 200ms;
+}
+
+.tile.animated-fast{
+  animation-iteration-count: infinite;
+  animation-duration: 100ms;
 }
 
 #player-hand {

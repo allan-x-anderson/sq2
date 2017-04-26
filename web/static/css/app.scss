@@ -21,6 +21,13 @@ body {
   height: 100%;
 }
 
+.lock-screen {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    position: fixed;
+}
+
 main {
   width: 100%;
   height: 100%;
@@ -31,8 +38,7 @@ main {
 #debug {
   color: #ececec;
   background: #111;
-  // position: absolute;
-  // top: 0;
+  padding: 0.5em;
   width: 100%;
 }
 
@@ -94,4 +100,25 @@ $board-height: 120px;
     height: $tile-height * 0.33;
   }
   height: 100%;
+}
+
+.board-tile .tile-jdenticon {
+  display: block;
+  position: absolute;
+  bottom: 0.3em;
+  right: 0.3em;
+  padding: 0.2em;
+  background: $ta-blue-dark;
+  canvas {
+    display: block;
+    float: left;
+  }
+}
+
+.player-jdenticon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  background: $ta-blue-dark;
 }

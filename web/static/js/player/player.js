@@ -1,20 +1,31 @@
 import {Presence} from "phoenix"
+import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
 import * as Hammer from 'hammerjs';
 window.Hammer = Hammer.default;
 
 //POOR = blocked role atm
 const BLOCKED_ROLE = "rich";
+const DEV_DISABLE_ROLE_BLOCK = true;
+
+
 const TILE_WIDTH = $('.tile').first().outerWidth();
 const TILE_HEIGHT = $('.tile').first().outerHeight();
 const LONG_PRESS_INTERVAL = 100
 const ESCALATE_STAGE_1_CLASS = 'pulse'
-const ESCALATE_STAGE_2_CLASS = 'wobble'
+const ESCALATE_STAGE_2_CLASS = 'pulse'
 
 const AFTER_PRESS_ANIMATION_TIME = 200
 const AFTER_PRESS_ANIMATION_IN_CLASS = 'zoomOut'
 const AFTER_PRESS_ANIMATION_OUT_CLASS = 'zoomIn'
 
+let pressStartEvent = deviceHasTouchEvents() ? 'touchstart' : 'mousedown'
+let pressEndEvent = deviceHasTouchEvents() ? 'touchend' : 'mouseup'
+
+
 function checkBlocked (currentPlayer, playedTiles, maxTiles){
+  if(DEV_DISABLE_ROLE_BLOCK == true) {
+    return false
+  }
   if (currentPlayer && currentPlayer.role === BLOCKED_ROLE) {
     if(playedTiles === maxTiles) {
       return false;
@@ -22,6 +33,15 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
       return true
     }
   }
+}
+
+function addJdenticon(player) {
+  console.log(player.name);
+  const html = `<div class='player-jdenticon'>
+                  ${createJdenticon(player.id.toString(), 40)}
+                </div>`
+  $('body').append($(html))
+  jdenticon();
 }
 
 function block (currentPlayer){
@@ -42,12 +62,20 @@ function renderPresence(connectedPlayers) {
   })
 }
 
-function pauseEvent(e){
-    if(e.stopPropagation) e.stopPropagation();
-    if(e.preventDefault) e.preventDefault();
-    e.cancelBubble=true;
-    e.returnValue=false;
-    return false;
+function absorbEvent_(event) {
+  var e = event || window.event;
+  e.preventDefault && e.preventDefault();
+  e.stopPropagation && e.stopPropagation();
+  e.cancelBubble = true;
+  e.returnValue = false;
+  return false;
+}
+
+function preventLongPressMenu(node) {
+  node.ontouchstart = absorbEvent_;
+  node.ontouchmove = absorbEvent_;
+  node.ontouchend = absorbEvent_;
+  node.ontouchcancel = absorbEvent_;
 }
 
 function escalateLongPress(el, pressedDuration){
@@ -55,13 +83,14 @@ function escalateLongPress(el, pressedDuration){
     $(el).addClass('animated animated-loop');
     $(el).addClass(ESCALATE_STAGE_1_CLASS);
   }
-  if (pressedDuration > 2000) {
+  if (pressedDuration > 3000) {
+    $(el).addClass('animated animated-loop animated-fast');
     $(el).addClass(ESCALATE_STAGE_2_CLASS);
   }
 }
 
 function deEscalateLongPress(el) {
-  $(el).removeClass('animated animated-loop')
+  $(el).removeClass('animated animated-loop animated-fast')
   $(el).removeClass(ESCALATE_STAGE_1_CLASS)
   $(el).removeClass(ESCALATE_STAGE_2_CLASS)
 }
@@ -76,7 +105,7 @@ function afterPressAnimation(el) {
   }, AFTER_PRESS_ANIMATION_TIME)
 
   setTimeout(()=> {
-    $(el).removeClass('animated animated-after-press')
+    $(el).removeClass('animated animated-after-press animated-fast')
     $(el).removeClass(AFTER_PRESS_ANIMATION_OUT_CLASS)
   }, AFTER_PRESS_ANIMATION_TIME * 2)
 }
@@ -102,53 +131,35 @@ function initListeners(channel, board, currentPlayer) {
       if (shouldUnblock) {
         unblock(currentPlayer)
       }
-      // if (currentPlayer && currentPlayer.role === BLOCKED_ROLE) {
-      //   if(currentPlayer.queue.length == maxTiles) {
-      //     currentPlayer.queue = []
-      //     currentPlayer.blocked = false
-      //     $('.block-play').html(currentPlayer.queue.length).addClass('hide')
-      //   }
-      // }
     }
   })
 
-  _.each($('.tile'), (el)=> {
-    var hammerTile = new window.Hammer.Manager(el);
-    hammerTile.add(new window.Hammer.Press({time: 50, threshold: 20}))
+  $(document).on(pressStartEvent, '.tile', function(e) {
+    preventLongPressMenu(e)
+    //Just in case
+    deEscalateLongPress($el)
+    if(window.clicked){
+      window.clearInterval(window.pressEscalationTimer)
+    }
+    let $el = $(e.target)
+    $el.data('original-xy', {width: $el.width(), height: $el.height()})
 
-    $(el).on('touchstart, mousedown', function(e) {
-      pauseEvent(e)
-      //Just in case
-      deEscalateLongPress($el)
-      if(window.clicked){
-        window.clearInterval(window.pressEscalationTimer)
+    let pressedFor = 0
+    window.pressEscalationTimer = window.setInterval( ()=> {
+      pressedFor += LONG_PRESS_INTERVAL
+      escalateLongPress($el, pressedFor)
+    }, LONG_PRESS_INTERVAL)
+    //Reset the prev data
+    $el.data('tile', '')
+    let tile = {
+      pressed_start: new Date(),
+      color: $(e.target).attr('id')
+    }
+    $el.data('tile', tile)
+    window.clicked = $el
+  });
 
-        window.clicked.css({
-          width: TILE_WIDTH,
-          height: TILE_HEIGHT
-        })
-      }
-      let $el = $(e.target)
-      $el.data('original-xy', {width: $el.width(), height: $el.height()})
-
-      let pressedFor = 0
-      window.pressEscalationTimer = window.setInterval( ()=> {
-        pressedFor += LONG_PRESS_INTERVAL
-        escalateLongPress($el, pressedFor)
-      }, LONG_PRESS_INTERVAL)
-      //Reset the prev data
-      $el.data('tile', '')
-      let tile = {
-        pressed_start: new Date(),
-        color: $(e.target).attr('id')
-      }
-      $el.data('tile', tile)
-      window.clicked = $el
-    });
-
-  })
-
-  $(document).on('touchend, mouseup', function(e) {
+  $(document).on(pressEndEvent, function(e) {
     if(window.clicked){
       window.clearInterval(window.pressEscalationTimer)
 
@@ -179,6 +190,7 @@ export function initPlayer(channel) {
   }
 
   let currentPlayer = $('#current-player').data('current-player').player
+  addJdenticon(currentPlayer)
   currentPlayer.queue = []
   initListeners(channel, board, currentPlayer)
 }
