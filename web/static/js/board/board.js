@@ -1,5 +1,6 @@
 import {Presence} from "phoenix"
 import {createJdenticon} from "../utils/utils"
+import {checkMatch, tilesPressedWithinTimeframe} from "./tile_matching"
 import moment from 'moment'
 
 
@@ -10,7 +11,7 @@ const ANIMATE_HERO_IN_CLASS = "bounce-in-fwd";
 const ANIMATE_HERO_OUT_CLASS = "fade-out-fwd";
 const ANIMATE_DOUBLE_MATCH_OUT_CLASS = "fadeOut";
 
-const CONSIDER_GROUPED_WITHIN_MS = 1000;
+
 const MATCH_ANIMATION_TIME = 300;
 const HERO_SHOW_TIME = 1500;
 
@@ -33,40 +34,6 @@ function updateTileSize(numPlayers) {
   })
 }
 
-function checkMatch(tiles, maxTiles){
-  console.log(tiles.length, maxTiles);
-  if(tiles.length === maxTiles){
-    let singleColorMatch = _.every(tiles, ['color', tiles[0].color])
-    if( singleColorMatch ) {
-      return "single_color_"+tiles[0].color
-    }
-
-    let firstColor = tiles[0].color
-    let secondColor = tiles[1].color
-    let oneTwoOneTwo = true
-    if(firstColor != secondColor){
-      _.each(tiles, (tile, idx) => {
-        console.log(tile, idx, idx % 2)
-        if(idx % 2 === 0) {
-          if(tile.color != firstColor){
-            oneTwoOneTwo = false
-          }
-        } else {
-          if(tile.color != secondColor) {
-            oneTwoOneTwo = false
-          }
-        }
-      })
-    } else {
-      oneTwoOneTwo = false
-    }
-
-    if(oneTwoOneTwo == true) {
-      return `alternating_colors_${firstColor}_${secondColor}`
-    }
-  }
-}
-
 function stripIncomingState (tiles) {
   return _.map(tiles, t => {
     if(t.state === 'incoming') {
@@ -81,11 +48,7 @@ function groupTimings(tiles) {
   let grouping = 0;
   let groupedTiles = _.each(tiles, (tile, idx) => {
     if(prevTile) {
-      let prevTime = moment(prevTile.pressed_end)
-      let time = moment(tile.pressed_end)
-      let difference = time.diff(prevTime)
-      console.log(difference);
-      if(difference < CONSIDER_GROUPED_WITHIN_MS){
+      if(tilesPressedWithinTimeframe(prevTile, tile)){
         prevTile.group_classes = "grouped group_" + grouping;
         tile.group_classes = "grouped group_" + grouping;
       } else {
@@ -170,8 +133,12 @@ function renderMatchedTiles(tiles, maxTiles, containerSelector, alreadyFound, fo
 }
 
 function renderMatchHero(match) {
+  let waslongPress = match.split('-')[0].match(/long_press_[0-9]{4}/i)
+  let timedTogether = match.split('-')[0] === "timed_together"
+  let longPressClass = waslongPress == null ? '' : `long-press ${waslongPress[0]}`
+  let timedTogetherClass = timedTogether ? 'timed-together' : ''
   let html = `
-    <div class='match-hero'>
+    <div class='match-hero ${longPressClass} ${timedTogetherClass}'>
       <div class='match-hero-tiles'></div>
       <div class='match-hero-image'>
         <img src='/images/match_heroes/${MATCH_HERO_IMAGES[match]}.png' />
@@ -226,6 +193,7 @@ function trimTiles (board) {
     }
   }
 }
+
 function initListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)

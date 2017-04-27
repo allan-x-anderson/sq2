@@ -105,6 +105,7 @@ $tile-green: #7BDE7A;
     border-top: solid 2px $shadow-color;
   }
   .tile.pressed-1000 {
+    margin-top: 3px;
     box-shadow: 1px -1px $shadow-color, 2px -2px $shadow-color, 3px -3px $shadow-color, 4px -4px $shadow-color;
   }
 }

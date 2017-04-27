@@ -80,8 +80,6 @@ $board-height: 120px;
 }
 
 #match-hero {
-  padding: 1em;
-  background: #ccc;
   text-align: center;
   width: 50%;
   margin: 0 auto;
@@ -89,6 +87,24 @@ $board-height: 120px;
   img {
     width: 100%;
     margin-bottom: 1em;
+  }
+}
+
+.match-hero {
+  width: 100%;
+  text-align: center;
+  padding: 1em;
+  background: #ccc;
+  &.long-press {
+    &.long_press_1000 {
+      background: green;
+    }
+    &.long_press_3000 {
+     background: purple;
+    }
+  }
+  &.timed-together {
+    background: red;
   }
 }
 
