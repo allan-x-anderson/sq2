@@ -15,6 +15,20 @@ $tile-green: #7BDE7A;
   position: relative;
   // margin-right: 10px;
   // border-radius: 4px;
+  &.long-press {
+    border-top: dashed 3px #000;
+    border-bottom: dashed 3px #000;
+  }
+  &.longer-press {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.0),
+      rgba(0, 0, 0, 0.0) 10px,
+      rgba(0, 0, 0, 0.3) 10px,
+      rgba(0, 0, 0, 0.3) 20px
+    ),
+    // box-shadow: 1px -1px $shadow-color, 2px -2px $shadow-color, 3px -3px $shadow-color, 4px -4px $shadow-color;
+  }
   &.tile-blue {
     background-color: $tile-blue;
     // border: solid 2px darken($tile-blue, 40%);
@@ -48,13 +62,6 @@ $tile-green: #7BDE7A;
   }
   &.grouped {
     border-top: solid 5px #000;
-  }
-  &.pressed-1000 {
-    box-shadow: 1px -1px $shadow-color, 2px -2px $shadow-color, 3px -3px $shadow-color, 4px -4px $shadow-color;
-  }
-  &.pressed-3000 {
-    border-top: dotted 2px #000;
-    border-bottom: dotted 2px #000;
   }
   // &.group-end {
   //   border: none 0;
@@ -110,7 +117,7 @@ $tile-green: #7BDE7A;
     height: $tile-height * 0.33;
   }
   .tile.grouped {
-    border-top: solid 2px $shadow-color;
+    border-top: solid 3px $shadow-color;
   }
   .tile.pressed-1000 {
     margin-top: 3px;
@@ -131,6 +138,19 @@ $tile-green: #7BDE7A;
   }
   .match-tiles {
     width: 83%;
+    float: left;
+  }
+}
+
+.board-tile .tile-jdenticon {
+  display: block;
+  position: absolute;
+  bottom: 0.3em;
+  right: 0.3em;
+  padding: 0.2em;
+  background: $ta-blue-dark;
+  canvas {
+    display: block;
     float: left;
   }
 }

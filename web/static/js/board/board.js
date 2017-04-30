@@ -13,7 +13,7 @@ const ANIMATE_DOUBLE_MATCH_OUT_CLASS = "fadeOut";
 
 
 const MATCH_ANIMATION_TIME = 300;
-const HERO_SHOW_TIME = 1500;
+const HERO_SHOW_TIME = 2500;
 
 const MATCH_HERO_IMAGES = {
   single_color_blue: "cute-cat",
@@ -91,20 +91,20 @@ function getAnimationClass(tile) {
 
 function pressDurationClasses(tile) {
   if(tile.press_duration > 3000){
-    return "pressed-3000"
+    return "longer-press"
   } else if(tile.press_duration > 1000){
-    return "pressed-1000"
+    return "long-press"
   }
 }
 
-function renderTile(tile, maxTiles, withJendicon = false){
+function renderTile(tile, maxTiles, jdenticonOpts = false){
   let $el = $(`<div class="tile board-tile"></div>`)
   .addClass('tile-' + tile.color + " " + getAnimationClass(tile) + " " + tile.group_classes + " " + pressDurationClasses(tile))
   .css({
     width: getTileWidth(maxTiles)
   })
-  if(withJendicon) {
-    let jdenticonString = `<div class='tile-jdenticon'>${createJdenticon(tile.player.name, 30)}</div>`
+  if(!_.isEmpty(jdenticonOpts)) {
+    let jdenticonString = `<div class='tile-jdenticon'>${createJdenticon(tile.player.name, jdenticonOpts.size)}</div>`
     $el.append($(jdenticonString))
   }
   return $el
@@ -121,11 +121,10 @@ function alreadyMatched(previousMatches, foundMatchName) {
   return previousMatches && foundMatchName && previousMatches[foundMatchName]
 }
 
-//TODO replace withJendicon with jdenticon opts that should look like {to_hash: "a tstin", size: y}
-function renderMatchedTiles(tiles, maxTiles, containerSelector, previousMatches, foundMatchName, withJendicon, points = false) {
-  console.log(points);
-  let tileEls = tiles.map( tile => {
-    return renderTile(tile, maxTiles, withJendicon)
+function renderMatchedTiles(opts) {
+  let points = opts.points || false
+  let tileEls = opts.tiles.map( tile => {
+    return renderTile(tile, opts.max_tiles, opts.jdenticon_opts)
   })
   const $set = $('<div></div>').addClass('matched-tiles-set')
   if(points){
@@ -134,8 +133,8 @@ function renderMatchedTiles(tiles, maxTiles, containerSelector, previousMatches,
   } else {
     $set.append(tileEls)
   }
-  $(containerSelector).prepend($set)
-  if(alreadyMatched(previousMatches, foundMatchName)){
+  $(opts.container_selector).prepend($set)
+  if(alreadyMatched(opts.previous_matches, opts.found_match_name)){
     $set.addClass('animated ' + ANIMATE_DOUBLE_MATCH_OUT_CLASS)
     setTimeout(() => {
       $set.remove()
@@ -145,9 +144,9 @@ function renderMatchedTiles(tiles, maxTiles, containerSelector, previousMatches,
 
 function renderMatchHero(match) {
   console.log("HERO MATCH", match);
-  let waslongPress = match.name.split('-')[0].match(/long_press_[0-9]{4}/i)
+  let waslongPress = match.name.split('-')[0].match(/long[az]_press-/i)
   let timedTogether = match.name.split('-')[0] === "timed_together"
-  let longPressClass = waslongPress == null ? '' : `long-press ${waslongPress[0]}`
+  let longPressClass = waslongPress == null ? '' : `${match.name.split('-')[0]}`
   let timedTogetherClass = timedTogether ? 'timed-together' : ''
   let html = `
     <div class='match-hero ${longPressClass} ${timedTogetherClass}'>
@@ -257,8 +256,17 @@ function initListeners(channel, board) {
       renderMatchHero(foundMatch)
       //Is delayed
       removeMatchHero();
-      renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '.match-hero .match-hero-tiles', undefined, undefined, true)
+      let HeroTilesOpts = {
+        container_selector: '.match-hero .match-hero-tiles',
+        tiles: matchedTiles,
+        max_tiles: board.connectedPlayersCount,
+        points: foundMatch.points,
+        jdenticon_opts: {
+          size: '20',
+        }
+      }
 
+      renderMatchedTiles(HeroTilesOpts)
       if(!alreadyMatched(board.matches, foundMatch.name)){
         board.points = board.points + foundMatch.points
         renderTotalPoints(board.points)
@@ -267,7 +275,15 @@ function initListeners(channel, board) {
       board.tiles = []
       window.setTimeout(()=> {
         renderTiles(board.tiles, board.connectedPlayersCount, '#board', true)
-        renderMatchedTiles(matchedTiles, board.connectedPlayersCount, '#matches', board.matches, foundMatch.name, false, foundMatch.points)
+        let matchesTilesOpts = {
+          container_selector: '#matches',
+          tiles: matchedTiles,
+          max_tiles: board.connectedPlayersCount,
+          previous_matches: board.matches,
+          found_match_name: foundMatch.name,
+          points: foundMatch.points
+        }
+        renderMatchedTiles(matchesTilesOpts)
         board.matches[foundMatch.name] = matchTiles
       }, MATCH_ANIMATION_TIME)
 

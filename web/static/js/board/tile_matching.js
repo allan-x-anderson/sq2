@@ -98,10 +98,11 @@ export function checkMatch(tiles, maxTiles){
     }
     let pressDurationMatch = matchPressDuration(tiles)
     if(pressDurationMatch) {
-      matchName = `long_press_${pressDurationMatch}-` + matchName
       if(pressDurationMatch === LONG_PRESS_DURATION) {
+        matchName = `long_press-` + matchName
         points = points * POINTS_LONG_PRESS_MULTIPLIER
       } else if (pressDurationMatch === LONGER_PRESS_DURATION) {
+        matchName = `longer_press-` + matchName
         points = points * POINTS_LONGER_PRESS_MULTIPLIER
       }
     }

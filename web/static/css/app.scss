@@ -4,6 +4,7 @@
 @import 'animate';
 @import 'typography';
 @import 'forms';
+@import 'board';
 @import 'tiles';
 
 html {
@@ -57,91 +58,4 @@ main {
   background: $ta-blue-medium;
   box-shadow: 4px 4px 0 $ta-camo-green;
   border-radius: 4px;
-}
-
-$board-height: 120px;
-.supervisor-left {
-  width: 65%;
-  float: left;
-}
-.supervisor-right {
-  margin-left: 3%;
-  width: 32%;
-  float: left;
-  height: 100%;
-}
-
-#board {
-  min-height: 120px;
-  margin-bottom: 1em;
-  padding: 0.5em;
-  overflow: hidden;
-  background: #ececec;
-}
-
-#match-hero {
-  text-align: center;
-  width: 50%;
-  margin: 0 auto;
-  margin-top: 22%;
-  img {
-    width: 100%;
-    margin-bottom: 1em;
-  }
-}
-
-.match-hero {
-  width: 100%;
-  text-align: center;
-  padding: 1em;
-  background: #ccc;
-  &.long-press {
-    &.long_press_1000 {
-      background: green;
-    }
-    &.long_press_3000 {
-     background: purple;
-    }
-  }
-  &.timed-together {
-    background: red;
-  }
-}
-
-#matches {
-  @extend .group;
-  background: #ececec;
-  padding: 20px;
-  height: 100%;
-}
-
-.board-tile .tile-jdenticon {
-  display: block;
-  position: absolute;
-  bottom: 0.3em;
-  right: 0.3em;
-  padding: 0.2em;
-  background: $ta-blue-dark;
-  canvas {
-    display: block;
-    float: left;
-  }
-}
-
-.player-jdenticon {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.5em;
-  background: $ta-blue-dark;
-}
-
-#points {
-  padding: 20px;
-  text-align: center;
-  background: $ta-camo-green;
-  .total-points {
-    font-size: 1.3em;
-    font-weight: bold;
-  }
 }
