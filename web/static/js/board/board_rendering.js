@@ -4,9 +4,14 @@ import { alreadyMatched } from "./tile_matching"
 const ANIMATE_IN_CLASS = "slide-in-right";
 const ANIMATE_OUT_CLASS = "slide-out-left";
 const ANIMATE_MATCH_CLASS = "fade-out-fwd";
+
 const ANIMATE_HERO_IN_CLASS = "bounce-in-fwd";
+const ANIMATE_HERO_IN_TIMED_TOGETHER_CLASS = "rotateIn";
+const ANIMATE_HERO_IN_LONG_PRESS_CLASS = "rollIn";
+const ANIMATE_HERO_IN_LONGER_PRESS_CLASS = "lightSpeedIn";
 const ANIMATE_HERO_OUT_CLASS = "fade-out-fwd";
-const ANIMATE_DOUBLE_MATCH_OUT_CLASS = "fadeOut";
+
+const ANIMATE_FOUND_MATCH_OUT_CLASS = "fadeOut";
 
 
 const MATCH_ANIMATION_TIME = 300;
@@ -97,19 +102,36 @@ function renderMatchedTiles(opts) {
   }
   $(opts.container_selector).prepend($set)
   if(alreadyMatched(opts.previous_matches, opts.found_match_name)){
-    $set.addClass('animated ' + ANIMATE_DOUBLE_MATCH_OUT_CLASS)
+    $set.addClass('animated ' + ANIMATE_FOUND_MATCH_OUT_CLASS)
     setTimeout(() => {
       $set.remove()
     }, MATCH_ANIMATION_TIME )
   }
 }
 
-function renderMatchHero(match) {
-  console.log("HERO MATCH", match);
-  let waslongPress = match.name.split('-')[0].match(/long[az]_press-/i)
+function getHeroAnimateInClass(match) {
+  let waslongPress = match.name.split('-')[0].match(/.*_press/i)
   let timedTogether = match.name.split('-')[0] === "timed_together"
-  let longPressClass = waslongPress == null ? '' : `${match.name.split('-')[0]}`
+  console.log("CLASS FINDING", waslongPress, timedTogether);
+  if (waslongPress) {
+    if(match.name.split('-')[0] === 'long_press') {
+      return ANIMATE_HERO_IN_LONG_PRESS_CLASS
+    } else {
+      return ANIMATE_HERO_IN_LONGER_PRESS_CLASS
+    }
+  }
+  if(timedTogether){
+    return ANIMATE_HERO_IN_TIMED_TOGETHER_CLASS
+  }
+  return ANIMATE_HERO_IN_CLASS
+}
+
+function renderMatchHero(match) {
+  let waslongPress = match.name.split('-')[0].match(/.*_press/i)
+  let timedTogether = match.name.split('-')[0] === "timed_together"
+  let longPressClass = waslongPress == null ? '' : `${match.name.split('-')[0].replace('_', '-')}`
   let timedTogetherClass = timedTogether ? 'timed-together' : ''
+  console.log("HERO MATCH", match, waslongPress, timedTogether);
   let html = `
     <div class='match-hero ${longPressClass} ${timedTogetherClass}'>
       <div class='match-hero-tiles'></div>
@@ -120,7 +142,7 @@ function renderMatchHero(match) {
   `
   let $el = $(html)
   $("#match-hero").removeClass('hide')
-  $el.addClass('animated ' + ANIMATE_HERO_IN_CLASS)
+  $el.addClass('animated ' + getHeroAnimateInClass(match))
   $("#match-hero").append($el)
 }
 

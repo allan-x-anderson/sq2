@@ -35,15 +35,21 @@ $board-height: 120px;
   padding: 1em;
   background: #ccc;
   &.long-press {
-    &.long_press_1000 {
-      background: green;
-    }
-    &.long_press_3000 {
-     background: purple;
-    }
+    border-top: dashed 3px #000;
+    border-bottom: dashed 3px #000;
+  }
+  &.longer-press {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.0),
+      rgba(0, 0, 0, 0.0) 10px,
+      rgba(0, 0, 0, 0.1) 10px,
+      rgba(0, 0, 0, 0.1) 20px
+    );
+    background-color: #ccc;
   }
   &.timed-together {
-    background: red;
+    border-top: solid 5px #000;
   }
 }
 
