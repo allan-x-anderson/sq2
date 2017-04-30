@@ -52,6 +52,10 @@ $tile-green: #7BDE7A;
   &.pressed-1000 {
     box-shadow: 1px -1px $shadow-color, 2px -2px $shadow-color, 3px -3px $shadow-color, 4px -4px $shadow-color;
   }
+  &.pressed-3000 {
+    border-top: dotted 2px #000;
+    border-bottom: dotted 2px #000;
+  }
   // &.group-end {
   //   border: none 0;
   // }
@@ -101,11 +105,32 @@ $tile-green: #7BDE7A;
 }
 
 .matched-tiles-set {
+  @extend .group;
+  .tile {
+    height: $tile-height * 0.33;
+  }
   .tile.grouped {
     border-top: solid 2px $shadow-color;
   }
   .tile.pressed-1000 {
     margin-top: 3px;
     box-shadow: 1px -1px $shadow-color, 2px -2px $shadow-color, 3px -3px $shadow-color, 4px -4px $shadow-color;
+  }
+  .tile.pressed-3000 {
+    border-top: dotted 2px #000;
+    border-bottom: dotted 2px #000;
+  }
+  .match-points {
+    width: 15%;
+    float: left;
+    line-height: $tile-height * 0.33;
+    background: $ta-camo-green;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 2%;
+  }
+  .match-tiles {
+    width: 83%;
+    float: left;
   }
 }

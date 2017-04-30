@@ -3,6 +3,12 @@ const CONSIDER_GROUPED_WITHIN_MS = 1000;
 const LONG_PRESS_DURATION = 1000;
 const LONGER_PRESS_DURATION = 3000;
 
+const POINTS_SINGLE_COLOR = 1
+const POINTS_ALTERNATING_COLOR_POINTS = 2
+const POINTS_TIMED_TOGETHER = 4
+const POINTS_LONG_PRESS_MULTIPLIER = 3
+const POINTS_LONGER_PRESS_MULTIPLIER = 4
+
 function matchAlternatingColors (tiles) {
   let firstColor = tiles[0].color
   let secondColor = tiles[1].color
@@ -75,21 +81,34 @@ function matchPressedWithinTimeframe (tiles) {
 // match_to_do_with_timing-match_to_do_with_patterns
 export function checkMatch(tiles, maxTiles){
   let matchName = null
+  let points = 0
   if(tiles.length === maxTiles){
     if( matchAllSingleColor(tiles) ) {
       matchName = "single_color_"+tiles[0].color
+      points += POINTS_SINGLE_COLOR
     } else if (matchAlternatingColors(tiles)) {
       matchName = `alternating_colors_${tiles[0].color}_${tiles[1].color}`
+      points += POINTS_TIMED_TOGETHER
     } else {
       matchName = "no_match_on_color_or_pattern"
     }
     if(matchPressedWithinTimeframe(tiles)) {
       matchName = 'timed_together-' + matchName
+      points += POINTS_TIMED_TOGETHER
     }
     let pressDurationMatch = matchPressDuration(tiles)
     if(pressDurationMatch) {
       matchName = `long_press_${pressDurationMatch}-` + matchName
+      if(pressDurationMatch === LONG_PRESS_DURATION) {
+        points = points * POINTS_LONG_PRESS_MULTIPLIER
+      } else if (pressDurationMatch === LONGER_PRESS_DURATION) {
+        points = points * POINTS_LONGER_PRESS_MULTIPLIER
+      }
     }
   }
-  return matchName;
+  if(matchName){
+    return {points: points, name: matchName};
+  } else {
+    return false;
+  }
 }

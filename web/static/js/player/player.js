@@ -4,7 +4,7 @@ import * as Hammer from 'hammerjs';
 window.Hammer = Hammer.default;
 
 //POOR = blocked role atm
-const BLOCKED_ROLE = "rich";
+const BLOCKED_ROLE = "poor";
 const DEV_DISABLE_ROLE_BLOCK = true;
 
 
@@ -38,7 +38,7 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
 function addJdenticon(player) {
   console.log(player.name);
   const html = `<div class='player-jdenticon'>
-                  ${createJdenticon(player.id.toString(), 40)}
+                  ${createJdenticon(player.name, 40)}
                 </div>`
   $('body').append($(html))
   jdenticon();
@@ -124,9 +124,10 @@ function initListeners(channel, board, currentPlayer) {
   })
 
   channel.on("tile-pressed", payload => {
-    if(payload.player_id !== currentPlayer.id){
+    console.log("player tile pressed", payload);
+    if(payload.player.id !== currentPlayer.id){
       currentPlayer.queue.push(payload)
-      $('.block-play').html(currentPlayer.queue.length)
+      $('.block-play .wait-time').html(currentPlayer.queue.length)
       let shouldUnblock = !checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount)
       if (shouldUnblock) {
         unblock(currentPlayer)
@@ -142,8 +143,6 @@ function initListeners(channel, board, currentPlayer) {
       window.clearInterval(window.pressEscalationTimer)
     }
     let $el = $(e.target)
-    $el.data('original-xy', {width: $el.width(), height: $el.height()})
-
     let pressedFor = 0
     window.pressEscalationTimer = window.setInterval( ()=> {
       pressedFor += LONG_PRESS_INTERVAL
@@ -162,7 +161,6 @@ function initListeners(channel, board, currentPlayer) {
   $(document).on(pressEndEvent, function(e) {
     if(window.clicked){
       window.clearInterval(window.pressEscalationTimer)
-
       let $el = window.clicked
       deEscalateLongPress($el)
       afterPressAnimation($el)
@@ -170,18 +168,22 @@ function initListeners(channel, board, currentPlayer) {
       let tile = $el.data('tile')
       tile.pressed_end = new Date()
 
-      let payload = {tile: tile, player_id: currentPlayer.id}
+      let tilePlayer = _.cloneDeep(currentPlayer)
+      delete tilePlayer.queue
+      let payload = {tile: tile, player: tilePlayer}
       channel.push("tile-pressed", payload)
-      //reset queue because they can play
+
+      //reset queue because they must have been able to play
       currentPlayer.queue = []
       currentPlayer.queue.push(payload)
       if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
         block(currentPlayer);
       }
+      window.clicked = undefined
     }
-    window.clicked = undefined
   });
 }
+
 export function initPlayer(channel) {
   let initialPresences = $('#current-player').data('initial-presences')
   let board = {

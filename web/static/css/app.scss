@@ -112,9 +112,6 @@ $board-height: 120px;
   @extend .group;
   background: #ececec;
   padding: 20px;
-  .tile {
-    height: $tile-height * 0.33;
-  }
   height: 100%;
 }
 
@@ -137,4 +134,14 @@ $board-height: 120px;
   right: 0;
   padding: 0.5em;
   background: $ta-blue-dark;
+}
+
+#points {
+  padding: 20px;
+  text-align: center;
+  background: $ta-camo-green;
+  .total-points {
+    font-size: 1.3em;
+    font-weight: bold;
+  }
 }

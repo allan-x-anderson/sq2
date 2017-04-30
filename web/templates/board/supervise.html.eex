@@ -12,6 +12,11 @@
   </section>
 </section>
 <section class="supervisor-right">
+  <section id="points">
+    <div class="total-points">
+
+    </div>
+  </section>
   <section id="matches">
 
   </section>

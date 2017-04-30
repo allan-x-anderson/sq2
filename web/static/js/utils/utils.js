@@ -1,9 +1,9 @@
 import SparkMD5 from 'spark-md5';
 
-
 export function createJdenticon(toHash, xy) {
   return `<canvas width='${xy}' height=${xy} data-jdenticon-hash='${SparkMD5.hash(toHash)}'></canvas>`
 }
+
 export function getParameterByName(name, url) {
     if (!url) {
       url = window.location.href;

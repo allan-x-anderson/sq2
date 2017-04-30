@@ -36,8 +36,8 @@ defmodule Sq2.GameChannel do
     end
   end
 
-  def handle_in("tile-pressed", %{"tile" => tile, "player_id" => player_id}, socket) do
-    broadcast! socket, "tile-pressed", %{"tile" => tile, "player_id" => player_id}
+  def handle_in("tile-pressed", %{"tile" => tile, "player" => player}, socket) do
+    broadcast! socket, "tile-pressed", %{"tile" => tile, "player" => player}
     {:noreply, socket}
   end
 
