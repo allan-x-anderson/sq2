@@ -8,14 +8,26 @@ defmodule Sq2.BoardController do
     render conn, "index.html"
   end
 
+  def role_from_repo(role) do
+    %{ "role" =>
+      %{ "id" => role.id, "name": role.name }
+    }
+  end
+
+  def board_from_repo(board) do
+    %{ "board" =>
+      %{ "id" => board.id, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
+    }
+  end
+
   def supervise(conn, %{"board_slug" => slug}) do
     board = Repo.get_by!(Board, slug: slug)
+            |> Sq2.Repo.preload([:roles])
     board_topic = "game:board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!
-    #Get board
-    render conn, "supervise.html", board: board, current_presences: current_presences
+    render conn, "supervise.html", board: board_from_repo(board), current_presences: current_presences
   end
 
   def find_percentage_of_players_in_role(role, players) do
@@ -82,8 +94,6 @@ defmodule Sq2.BoardController do
     board = Repo.get_by!(Board, slug: slug)
             |> Sq2.Repo.preload([:players])
     board_topic = "game:board:" <> Integer.to_string(board.id)
-    IO.puts "board_topic"
-    IO.puts board_topic
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!

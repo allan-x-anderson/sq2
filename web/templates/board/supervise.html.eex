@@ -3,7 +3,7 @@
   Connected: <%= length Map.keys(Poison.decode! @current_presences) %> (<%= Enum.join presence_ids, "," %>)
 </section>
 <section class="supervisor-left">
-  <section id="board" data-board-id="<%= @board.id %>" data-initial-presences="<%= @current_presences %>">
+  <section id="board" data-board="<%= Poison.encode! @board %>" data-initial-presences="<%= @current_presences %>">
     <section class="tiles">
     </section>
   </section>

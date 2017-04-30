@@ -160,6 +160,7 @@ export function initBoard(channel) {
     connectedPlayersCount: Object.keys(initialPresences).length,
     tiles: [],
     matches: {},
+    roles: $('#board').data('board').roles,
     points: 0
   }
   boardRenderer.updateTileSize(board.connectedPlayersCount)

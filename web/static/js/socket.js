@@ -18,7 +18,7 @@ let board = $("#board")
 
 let boardChannel = undefined
 
-if(board.length){
+if(board.length && board.data('board').board){
   boardChannel = connectSupervisor(socket)
   initBoard(boardChannel)
 } else {
@@ -195,6 +195,6 @@ if ( board.length ){
 // function confirmExit() {
 //   return "Schließt dieses Fenster nur, wenn die Lehrkraft es gesagt hat";
 // }
-// 
+//
 
 export default socket
