@@ -147,11 +147,14 @@ function renderMatchHero(match) {
 }
 
 function removeMatchHero(opts = { immediate: false }) {
+  if(window.heroOutTimeout) {
+    clearTimeout(window.heroOutTimeout)
+  }
   if(opts.immediate) {
     $('.match-hero').remove()
     $("#match-hero").addClass('hide')
   } else {
-    setTimeout(() => {
+    window.heroOutTimeout = setTimeout(() => {
       $('.match-hero').addClass('animated ' + ANIMATE_HERO_OUT_CLASS)
       setTimeout(() => {
         $('.match-hero').remove()

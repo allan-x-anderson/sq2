@@ -30,6 +30,7 @@ function matchAlternatingColors (tiles) {
   }
   return oneTwoOneTwo
 }
+
 function matchAllSingleColor (tiles) {
   return _.every(tiles, ['color', tiles[0].color])
 }
@@ -41,8 +42,7 @@ export function tilesPressedWithinTimeframe(prevTile, tile){
   return difference < CONSIDER_GROUPED_WITHIN_MS
 }
 
-// IDEA press durations only match if they are within the given duration range
-function matchPressDuration (tiles) {
+export function matchPressDuration (tiles) {
   let longPress = _.every(tiles, function(tile) {
     return tile.press_duration > LONG_PRESS_DURATION
   })
@@ -79,6 +79,7 @@ function matchPressedWithinTimeframe (tiles) {
 
 // Note the - separating the below
 // match_to_do_with_timing-match_to_do_with_patterns
+// TODO Figure out how to strip classes for duration when the match is only on a color.
 export function checkMatch(tiles, maxTiles){
   let matchName = null
   let points = 0

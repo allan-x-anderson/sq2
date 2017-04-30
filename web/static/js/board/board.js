@@ -1,5 +1,5 @@
 import {Presence} from "phoenix"
-import {checkMatch, tilesPressedWithinTimeframe} from "./tile_matching"
+import {checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe} from "./tile_matching"
 import { alreadyMatched } from "./tile_matching"
 import boardRenderer from "./board_rendering"
 import moment from 'moment'
@@ -107,9 +107,12 @@ function initListeners(channel, board) {
       //The animation on play area
       boardRenderer.renderStaggeredTiles(matchingTiles, board.connectedPlayersCount, '#board', true)
 
-      boardRenderer.renderMatchHero(foundMatch)
-      //Is delayed
-      boardRenderer.removeMatchHero();
+      if(!alreadyMatched(board.matches, foundMatch.name)){
+        boardRenderer.renderMatchHero(foundMatch)
+        //Is delayed
+        boardRenderer.removeMatchHero();
+      }
+
       let HeroTilesOpts = {
         container_selector: '.match-hero .match-hero-tiles',
         tiles: matchedTiles,
@@ -121,6 +124,7 @@ function initListeners(channel, board) {
       }
 
       boardRenderer.renderMatchedTiles(HeroTilesOpts)
+
       if(!alreadyMatched(board.matches, foundMatch.name)){
         board.points = board.points + foundMatch.points
         boardRenderer.renderTotalPoints(board.points)
