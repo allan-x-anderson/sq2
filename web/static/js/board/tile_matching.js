@@ -113,3 +113,7 @@ export function checkMatch(tiles, maxTiles){
     return false;
   }
 }
+
+export function alreadyMatched(previousMatches, foundMatchName) {
+  return previousMatches && foundMatchName && previousMatches[foundMatchName]
+}
