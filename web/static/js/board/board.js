@@ -62,6 +62,10 @@ function trimTiles (board) {
   }
 }
 
+function checkGameTypeEvents() {
+  
+}
+
 function initListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
@@ -82,6 +86,9 @@ function initListeners(channel, board) {
   channel.on("tile-pressed", payload => {
     console.log("Tile pressed board", payload);
     let tile = payload.tile
+    board.total_played_tiles++
+    console.log(board.total_played_tiles);
+    checkGameTypeEvents(board.total_played_tiles, board.connectedPlayersCount)
 
     //TODO attach the player to the tile when they press it.
     tile.player = payload.player
@@ -116,6 +123,7 @@ function initListeners(channel, board) {
       let HeroTilesOpts = {
         container_selector: '.match-hero .match-hero-tiles',
         tiles: matchedTiles,
+        found_match_name: foundMatch.name,
         max_tiles: board.connectedPlayersCount,
         points: foundMatch.points,
         jdenticon_opts: {
@@ -159,6 +167,7 @@ export function initBoard(channel) {
     connectedPlayers: initialPresences,
     connectedPlayersCount: Object.keys(initialPresences).length,
     tiles: [],
+    total_played_tiles: 0,
     matches: {},
     roles: $('#board').data('board').roles,
     points: 0

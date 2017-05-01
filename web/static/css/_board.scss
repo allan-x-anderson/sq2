@@ -11,12 +11,23 @@ $board-height: 120px;
 }
 
 #board {
-  min-height: 120px;
+  height: 120px;
   margin-bottom: 1em;
   padding: 0.5em;
   overflow: hidden;
   background: #ececec;
 }
+
+#matches {
+  @extend .group;
+  background: #ececec;
+  padding: 20px;
+  height: 100%;
+  &.match-already-matched {
+    background: lighten($tile-red, 20%);
+  }
+}
+
 
 #match-hero {
   text-align: center;
@@ -51,13 +62,6 @@ $board-height: 120px;
   &.timed-together {
     border-top: solid 5px #000;
   }
-}
-
-#matches {
-  @extend .group;
-  background: #ececec;
-  padding: 20px;
-  height: 100%;
 }
 
 .player-jdenticon {

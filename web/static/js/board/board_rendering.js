@@ -90,7 +90,12 @@ function renderTile(tile, maxTiles, jdenticonOpts = false){
 */
 function renderMatchedTiles(opts) {
   let points = opts.points || false
+  let matchOnColorOrPatternOnly = opts.found_match_name && opts.found_match_name.split('-').length === 1
   let tileEls = opts.tiles.map( tile => {
+    if(matchOnColorOrPatternOnly){
+      delete tile.duration
+      delete tile.group_classes
+    }
     return renderTile(tile, opts.max_tiles, opts.jdenticon_opts)
   })
   const $set = $('<div></div>').addClass('matched-tiles-set')
@@ -103,7 +108,9 @@ function renderMatchedTiles(opts) {
   $(opts.container_selector).prepend($set)
   if(alreadyMatched(opts.previous_matches, opts.found_match_name)){
     $set.addClass('animated ' + ANIMATE_FOUND_MATCH_OUT_CLASS)
+    $(opts.container_selector).addClass('match-already-matched')
     setTimeout(() => {
+      $(opts.container_selector).removeClass('match-already-matched')
       $set.remove()
     }, MATCH_ANIMATION_TIME )
   }

@@ -108,7 +108,8 @@ export function checkMatch(tiles, maxTiles){
       }
     }
   }
-  if(matchName){
+  let noColorOrPatternMatch = matchName && matchName.match(/no_match_on_color_or_pattern/i)
+  if(matchName && noColorOrPatternMatch == undefined){
     return {points: points, name: matchName};
   } else {
     return false;

@@ -16,7 +16,7 @@ defmodule Sq2.BoardController do
 
   def board_from_repo(board) do
     %{ "board" =>
-      %{ "id" => board.id, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
+      %{ "id" => board.id, "type" => board.type, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
     }
   end
 
@@ -92,12 +92,12 @@ defmodule Sq2.BoardController do
     player = Repo.get!(Player, player_id)
             |> Sq2.Repo.preload([:role])
     board = Repo.get_by!(Board, slug: slug)
-            |> Sq2.Repo.preload([:players])
+            |> Sq2.Repo.preload([:players, :roles])
     board_topic = "game:board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!
-    render conn, "play.html", board: board, player: player_from_repo(player), current_presences: current_presences
+    render conn, "play.html", board: board_from_repo(board), player: player_from_repo(player), current_presences: current_presences
   end
 
 

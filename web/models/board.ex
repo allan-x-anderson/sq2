@@ -3,6 +3,7 @@ defmodule Sq2.Board do
 
   schema "boards" do
     field :name, :string
+    field :type, :string
     field :slug, :string
     belongs_to :game, Sq2.Game
     has_many :players, Sq2.Player
@@ -18,8 +19,8 @@ defmodule Sq2.Board do
     IO.inspect slugified_name(params)
     params = Map.merge(params, slugified_name(params))
     struct
-    |> cast(params, [:name, :game_id, :slug])
-    |> validate_required([:name, :game_id])
+    |> cast(params, [:name, :type, :game_id, :slug])
+    |> validate_required([:name, :type, :game_id])
   end
 
   def slugified_name(%{"name" => name}) do
@@ -27,7 +28,6 @@ defmodule Sq2.Board do
       |> String.downcase
       |> String.replace(~r/[^a-z0-9\s-]/, "")
       |> String.replace(~r/(\s|-)+/, "-")
-    IO.inspect(slugged_name)
     %{"slug" => slugged_name}
   end
 end

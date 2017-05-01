@@ -68,6 +68,22 @@ $tile-green: #7BDE7A;
   // }
 }
 
+.dummy-tile {
+  opacity: 0.3;
+  &.tile-blue {
+    background-color: $tile-blue;
+  }
+  &.tile-red {
+    background-color: $tile-red;
+  }
+  &.tile-yellow {
+    background-color: $tile-yellow;
+  }
+  &.tile-green {
+    background-color: $tile-green;
+  }
+}
+
 .block-play {
   position: fixed;
   top: 0;
@@ -77,8 +93,23 @@ $tile-green: #7BDE7A;
   background: #000;
   color: #fff;
   opacity: 0.9;
-  padding: 30%;
-  font-size: 2em;
+  padding: 2em;
+  font-size: 1.4em;
+  text-align: center;
+  img.blocked-image {
+    width: 100%;
+  }
+  .blocked-wait-time {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 25px;
+    background: $ta-camo-green-light;
+    color: $ta-blue-dark;
+    font-weight: bold;
+    text-align: center;
+  }
   &.hide {
     display: none;
   }
@@ -99,9 +130,10 @@ $tile-green: #7BDE7A;
 }
 
 #player-hand {
+  background: #fff;
   width: 100%;
   height: 100%;
-  .tile {
+  .tile, .dummy-tile {
     display: block;
     float: left;
     width: 50%;

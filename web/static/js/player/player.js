@@ -3,9 +3,40 @@ import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
 import * as Hammer from 'hammerjs';
 window.Hammer = Hammer.default;
 
-//POOR = blocked role atm
-const BLOCKED_ROLE = "poor";
-const DEV_DISABLE_ROLE_BLOCK = true;
+const BLOCKED_DATA = {
+  'citizen': {
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
+  },
+  'poor': {
+    percentage_of_turns: 1,
+    message: 'You go to work',
+    tiles_whitelist: ['blue']
+  },
+  'middle_class': {
+    percentage_of_turns: 0.5,
+    message: 'You go to your office',
+    tiles_whitelist: ['blue', 'yellow']
+  },
+  'rich': {
+    percentage_of_turns: 0.25,
+    message: 'You have a meeting with your finanacial planner',
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
+  },
+};
+
+const BOARD_TYPE_DATA = {
+  "anarchy": {
+    tile_ids: ['blue', 'red', 'yellow', 'green']
+  },
+  "inequality": {
+    tile_ids: ['blue', 'red', 'yellow', 'green']
+  },
+  "fake_news": {
+    tile_ids: ['blue', 'red', 'yellow', 'green']
+  },
+}
+
+const DEV_DISABLE_ROLE_BLOCK = false;
 
 
 const TILE_WIDTH = $('.tile').first().outerWidth();
@@ -26,8 +57,9 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
   if(DEV_DISABLE_ROLE_BLOCK == true) {
     return false
   }
-  if (currentPlayer && currentPlayer.role === BLOCKED_ROLE) {
-    if(playedTiles === maxTiles) {
+  if (currentPlayer) {
+    let blockedForTurns = Math.ceil(maxTiles * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+    if(playedTiles === blockedForTurns + 1) {
       return false;
     } else {
       return true
@@ -44,14 +76,26 @@ function addJdenticon(player) {
   jdenticon();
 }
 
-function block (currentPlayer){
-  console.log("BLOCKED");
-  $('.block-play').html(currentPlayer.queue.length).removeClass('hide')
+function updateBlockedWaitTime(currentPlayer, blockedForTurns) {
+  console.log(currentPlayer.queue.length, blockedForTurns);
+  let message = BLOCKED_DATA[currentPlayer.role].message
+  $('.block-play .blocked-image').attr('src', `images/blocked_play/${currentPlayer.role}.png`)
+  $('.block-play .blocked-message-container .blocked-message').html(message)
+  $('.block-play .blocked-wait-time').html(blockedForTurns + 1 - currentPlayer.queue.length)
 }
 
-function unblock (currentPlayer){
+function block (currentPlayer, connectedPlayersCount) {
+  console.log("BLOCKED");
+  $('.block-play').removeClass('hide')
+  let blockedForTurns = Math.floor(connectedPlayersCount * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+  updateBlockedWaitTime(currentPlayer, blockedForTurns)
+}
+
+function unblock (currentPlayer, connectedPlayersCount) {
   console.log("NOT BLOCKED");
-  $('.block-play').html(currentPlayer.queue.length).addClass('hide')
+  $('.block-play').addClass('hide')
+  let blockedForTurns = Math.floor(connectedPlayersCount * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+  updateBlockedWaitTime(currentPlayer, blockedForTurns)
 }
 
 //TODO this is duped in board
@@ -124,13 +168,13 @@ function initListeners(channel, board, currentPlayer) {
   })
 
   channel.on("tile-pressed", payload => {
-    console.log("player tile pressed", payload);
     if(payload.player.id !== currentPlayer.id){
       currentPlayer.queue.push(payload)
-      $('.block-play .wait-time').html(currentPlayer.queue.length)
+      let blockedForTurns = Math.floor(board.connectedPlayersCount * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+      updateBlockedWaitTime(currentPlayer, blockedForTurns)
       let shouldUnblock = !checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount)
       if (shouldUnblock) {
-        unblock(currentPlayer)
+        unblock(currentPlayer, board.connectedPlayersCount)
       }
     }
   })
@@ -176,12 +220,39 @@ function initListeners(channel, board, currentPlayer) {
       //reset queue because they must have been able to play
       currentPlayer.queue = []
       currentPlayer.queue.push(payload)
-      if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
-        block(currentPlayer);
+      if(board.type === "inequality") {
+        if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
+          block(currentPlayer, board.connectedPlayersCount);
+        }
       }
       window.clicked = undefined
     }
   });
+}
+
+function renderTile (tile_id, isClickable) {
+  let tileClass = isClickable ? 'tile' : 'dummy-tile'
+  return $(`<div id="${tile_id}" class="${tileClass} tile-${tile_id}">`)
+}
+
+function isAvailableTile(currentPlayer, tile_id) {
+  if (BLOCKED_DATA[currentPlayer.role] && _.includes(BLOCKED_DATA[currentPlayer.role].tiles_whitelist, tile_id)) {
+    return true
+  }
+  return false
+}
+
+function renderPlayerTiles (currentPlayer, board) {
+  let tile_ids = BOARD_TYPE_DATA[board.type].tile_ids
+  let tileEls = _.map(tile_ids, (tile_id)=> {
+    return renderTile(tile_id, isAvailableTile(currentPlayer, tile_id))
+  })
+  $('#player-hand').append(tileEls)
+  console.log(tileEls);
+}
+
+function changeBoard(board_id) {
+
 }
 
 export function initPlayer(channel) {
@@ -189,10 +260,12 @@ export function initPlayer(channel) {
   let board = {
     connectedPlayers: initialPresences,
     connectedPlayersCount: Object.keys(initialPresences).length,
+    type: $('#current-board').data('board').board.type
   }
 
   let currentPlayer = $('#current-player').data('current-player').player
   addJdenticon(currentPlayer)
+  renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
   initListeners(channel, board, currentPlayer)
 }
