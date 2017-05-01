@@ -46,6 +46,26 @@ defmodule Sq2.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("fake-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}, socket) do
+    broadcast! socket, "fake-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}
+    {:noreply, socket}
+  end
+
+  def handle_out("fake-news-published", payload, socket) do
+    push socket, "fake-news-published", payload
+    {:noreply, socket}
+  end
+
+  def handle_in("real-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}, socket) do
+    broadcast! socket, "real-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}
+    {:noreply, socket}
+  end
+
+  def handle_out("real-news-published", payload, socket) do
+    push socket, "real-news-published", payload
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, socket) do
     IO.puts socket.assigns.board.slug
     if socket.assigns[:player] do

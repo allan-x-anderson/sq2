@@ -1,5 +1,6 @@
 import {Presence} from "phoenix"
 import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
+import { respondBoardTypeEvent } from "./board_type_events_responses"
 import * as Hammer from 'hammerjs';
 window.Hammer = Hammer.default;
 
@@ -165,6 +166,14 @@ function initListeners(channel, board, currentPlayer) {
     board.connectedPlayers = Presence.syncDiff(board.connectedPlayers, diff)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderPresence(board.connectedPlayers)
+  })
+
+  channel.on("fake-news-published", payload => {
+    respondBoardTypeEvent(payload)
+  })
+
+  channel.on("real-news-published", payload => {
+    respondBoardTypeEvent(payload)
   })
 
   channel.on("tile-pressed", payload => {

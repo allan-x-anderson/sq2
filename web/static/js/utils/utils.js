@@ -1,5 +1,12 @@
 import SparkMD5 from 'spark-md5';
 
+export function spliceString (str, start, deleteCount, add) {
+    return str.slice(0, start) + (add || "") + str.slice(start + deleteCount);
+}
+
+export function randomInt (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
 export function createJdenticon(toHash, xy) {
   return `<canvas width='${xy}' height=${xy} data-jdenticon-hash='${SparkMD5.hash(toHash)}'></canvas>`
 }

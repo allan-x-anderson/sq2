@@ -1,0 +1,13 @@
+.button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  text-align: center;
+  font-weight: bold;
+  background: $tile-blue;
+  color: #fff;
+  margin-right: 1em;
+  &:hover {
+    cursor: pointer;
+    background: darken($tile-blue, 5%);
+  }
+}

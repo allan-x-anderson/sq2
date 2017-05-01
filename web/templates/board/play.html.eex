@@ -16,3 +16,31 @@
   </div>
   <div class="blocked-wait-time"></div>
 </div>
+
+<div class="modal modal-news hide">
+  <div class="modal-content modal-news-summary">
+    <h1></h1>
+    <p></p>
+    <div class="modal-actions">
+      <div class="button j-button-research">
+        Research
+      </div>
+      <div class="button j-button-close">
+        Continue
+      </div>
+    </div>
+  </div>
+  <div class="modal-content modal-news-research hide">
+    <div class="modal-research-text">
+
+    </div>
+    <div class="actions">
+      <div class="button j-button-research">
+        Research Further
+      </div>
+      <div class="button j-button-close">
+        Close
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import {Presence} from "phoenix"
 import {checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe} from "./tile_matching"
 import { alreadyMatched } from "./tile_matching"
+import { checkBoardTypeEvents } from "./board_type_events_emissions"
 import boardRenderer from "./board_rendering"
 import moment from 'moment'
 
@@ -62,10 +63,6 @@ function trimTiles (board) {
   }
 }
 
-function checkGameTypeEvents() {
-  
-}
-
 function initListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
@@ -87,8 +84,8 @@ function initListeners(channel, board) {
     console.log("Tile pressed board", payload);
     let tile = payload.tile
     board.total_played_tiles++
-    console.log(board.total_played_tiles);
-    checkGameTypeEvents(board.total_played_tiles, board.connectedPlayersCount)
+    console.log(board.total_played_tiles)
+    checkBoardTypeEvents(board, channel)
 
     //TODO attach the player to the tile when they press it.
     tile.player = payload.player
@@ -163,13 +160,15 @@ function initListeners(channel, board) {
 
 export function initBoard(channel) {
   let initialPresences = $('#board').data('initial-presences')
+  console.log($('#board').data('board'));
   let board = {
     connectedPlayers: initialPresences,
     connectedPlayersCount: Object.keys(initialPresences).length,
     tiles: [],
     total_played_tiles: 0,
     matches: {},
-    roles: $('#board').data('board').roles,
+    roles: $('#board').data('board').board.roles,
+    type: $('#board').data('board').board.type,
     points: 0
   }
   boardRenderer.updateTileSize(board.connectedPlayersCount)
