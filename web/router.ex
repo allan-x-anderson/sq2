@@ -25,6 +25,8 @@ defmodule Sq2.Router do
     get "/admin", AdminController, :index
     get "/join", BoardController, :join
     post "/join", BoardController, :join
+    get "/players/:player_id/change_board/:board_slug", BoardController :change_board
+    #must be last
     get "/:board_slug", BoardController, :play
   end
 

@@ -1,5 +1,5 @@
 import { randomInt, spliceString } from '../utils/utils'
-const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red yellow'
+const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red red'
 const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red blue red green'
 const RESEARCH_SOURCES = ['Email recieved from the editor of The Times', 'Reading cited references', 'Message recieved from a trusted friend', 'Phone conversation with head of department']
 const BOARD_TYPE_EVENTS_RESPONDERS = {

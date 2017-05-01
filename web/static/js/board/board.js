@@ -93,7 +93,7 @@ function initListeners(channel, board) {
 
     board.tiles = updateBoardTiles(tile, board.tiles, board.connectedPlayersCount)
     let matchTiles = _.reject(board.tiles, t => t.state == "outgoing")
-    let foundMatch = checkMatch(matchTiles, board.connectedPlayersCount)
+    let foundMatch = checkMatch(matchTiles, board.connectedPlayersCount, board)
     if(foundMatch){
       //Clear previous hero
       boardRenderer.removeMatchHero({immediate: true});

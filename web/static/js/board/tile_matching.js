@@ -9,6 +9,46 @@ const POINTS_TIMED_TOGETHER = 4
 const POINTS_LONG_PRESS_MULTIPLIER = 3
 const POINTS_LONGER_PRESS_MULTIPLIER = 4
 
+// TODO More reason to manage constants
+// TODO Probably need 6 players to make it random enough
+// TODO Think about how to make it work for anything following the pattern
+// Potentially just use wording red blue green then anything
+const BOARD_TYPE_SPECIAL_MATCHES = {
+  fake_news: [
+    {
+      pattern: '(green blue red red).*',
+      points: -100,
+      name: 'special#fake_news'
+    },
+    {
+      pattern: '(red blue red green).*',
+      points: 70,
+      name: 'special_real_news'
+    }
+  ]
+}
+
+function foundPatternInColors(pattern, colorsString) {
+  let regexp = new RegExp(pattern, 'i')
+  return colorsString.match(regexp)
+}
+
+function checkSpecialMatches(tiles, boardType) {
+  let specialMatchesForBoard = BOARD_TYPE_SPECIAL_MATCHES[boardType]
+  console.log("SPECIAL", specialMatchesForBoard, boardType);
+  if(specialMatchesForBoard){
+    let tileColorsAsString = _.map(tiles, 'color').join(' ')
+    console.log(specialMatchesForBoard, tileColorsAsString);
+    let specialMatch
+    let specialMatches = _.filter(specialMatchesForBoard, specialMatch => {
+      return foundPatternInColors(specialMatch.pattern, tileColorsAsString)
+    })
+    if(specialMatches){
+      return _.first(specialMatches)
+    }
+  }
+}
+
 function matchAlternatingColors (tiles) {
   let firstColor = tiles[0].color
   let secondColor = tiles[1].color
@@ -80,10 +120,17 @@ function matchPressedWithinTimeframe (tiles) {
 // Note the - separating the below
 // match_to_do_with_timing-match_to_do_with_patterns
 // TODO Figure out how to strip classes for duration when the match is only on a color.
-export function checkMatch(tiles, maxTiles){
+export function checkMatch(tiles, maxTiles, board){
   let matchName = null
   let points = 0
   if(tiles.length === maxTiles){
+    let specialMatch = checkSpecialMatches(tiles, board.type)
+    if ( specialMatch ) {
+      matchName = specialMatch.name
+      points += specialMatch.points
+      // Break out early
+      return {points: points, name: matchName};
+    }
     if( matchAllSingleColor(tiles) ) {
       matchName = "single_color_"+tiles[0].color
       points += POINTS_SINGLE_COLOR
