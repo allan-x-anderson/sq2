@@ -3,7 +3,7 @@ defmodule Sq2.UserSocket do
 
   ## Channels
    #channel "room:*", Sq2.RoomChannel
-   channel "game:*", Sq2.GameChannel
+   channel "board:*", Sq2.BoardChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

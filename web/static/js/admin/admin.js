@@ -19,9 +19,9 @@ function initListeners(channel, board) {
   })
 }
 
-export function initAdmin(channels) {
+export function initAdmin(boardChannels) {
   let boards = []
-  _.each(channels, (channel, idx)=> {
+  _.each(boardChannels, (channel, idx)=> {
     boards[idx] = boards[idx] || {}
     boards[idx].id = parseInt($($('#admin .board').get(idx)).attr('id').split("_")[1])
     boards[idx].connectedPlayers = {}

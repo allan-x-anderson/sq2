@@ -12,14 +12,14 @@ defmodule Sq2.AdminController do
 
   def supervise_game(conn, %{"game_id" => id}) do
     game = Repo.get_by!(Game, id: id)
-            |> Sq2.Repo.preload([:boards])
+           |> Sq2.Repo.preload(boards: (from b in Board, order_by: [desc: b.inserted_at]))
     # game = first Sq2.Repo.all(Game)
     # board = Repo.get_by!(Board, slug: slug)
     #         |> Sq2.Repo.preload([:roles])
     online_players =
       game.boards
       |> Enum.reduce(Map.new(), fn(board, acc)->
-        board_topic = "game:board:" <> Integer.to_string(board.id)
+        board_topic = "board:" <> Integer.to_string(board.id)
         acc = Map.put(acc, board.id, Sq2.Presence.list(board_topic))
       end)
 

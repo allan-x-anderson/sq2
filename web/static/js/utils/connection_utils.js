@@ -5,7 +5,7 @@ export function connectToSocket(socket, params) {
 }
 
 export function getBoardChannel (socket, id) {
-  return socket.channel("game:board:" + id)
+  return socket.channel("board:" + id)
 }
 
 export function joinChannel(channel, token){

@@ -23,7 +23,7 @@ defmodule Sq2.BoardController do
   def display(conn, %{"board_slug" => slug}) do
     board = Repo.get_by!(Board, slug: slug)
             |> Sq2.Repo.preload([:roles])
-    board_topic = "game:board:" <> Integer.to_string(board.id)
+    board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!
@@ -93,7 +93,7 @@ defmodule Sq2.BoardController do
             |> Sq2.Repo.preload([:role])
     board = Repo.get_by!(Board, slug: slug)
             |> Sq2.Repo.preload([:players, :roles])
-    board_topic = "game:board:" <> Integer.to_string(board.id)
+    board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!

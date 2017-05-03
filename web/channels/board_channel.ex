@@ -1,9 +1,8 @@
-defmodule Sq2.GameChannel do
+defmodule Sq2.BoardChannel do
   use Phoenix.Channel
 
   alias Sq2.{Role, Board, Player}
   alias Sq2.Presence
-
 
   def player_from_socket(player) do
     %{ "player" =>
@@ -25,6 +24,36 @@ defmodule Sq2.GameChannel do
         send self(), :after_join
         {:ok, socket}
     end
+  end
+
+  def handle_in("tile-pressed", %{"tile" => tile, "player" => player}, socket) do
+    broadcast! socket, "tile-pressed", %{"tile" => tile, "player" => player}
+    {:noreply, socket}
+  end
+
+  def handle_out("tile-pressed", payload, socket) do
+    push socket, "tile-pressed", payload
+    {:noreply, socket}
+  end
+
+  def handle_in("fake-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}, socket) do
+    broadcast! socket, "fake-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}
+    {:noreply, socket}
+  end
+
+  def handle_out("fake-news-published", payload, socket) do
+    push socket, "fake-news-published", payload
+    {:noreply, socket}
+  end
+
+  def handle_in("real-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}, socket) do
+    broadcast! socket, "real-news-published", %{"board_type" => board_type, "event_name" => event_name, "triggered_count" => triggered_count}
+    {:noreply, socket}
+  end
+
+  def handle_out("real-news-published", payload, socket) do
+    push socket, "real-news-published", payload
+    {:noreply, socket}
   end
 
   def handle_info(:after_join, socket) do
