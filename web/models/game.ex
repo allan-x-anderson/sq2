@@ -1,5 +1,6 @@
 defmodule Sq2.Game do
   use Sq2.Web, :model
+  @derive {Poison.Encoder, only: [:id, :name]}
 
   schema "games" do
     field :name, :string

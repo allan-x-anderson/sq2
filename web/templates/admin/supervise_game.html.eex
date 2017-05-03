@@ -1,0 +1,13 @@
+<%= @game.name %>
+<%= inspect @online_players %>
+<div class="">
+  <%= for board <- @game.boards do %>
+    <div>
+      <%= board.name %>
+      <% board_id = board.id %>
+      <p>
+        players: <%= Map.keys @online_players[board.id] %>
+      </p>
+    </div>
+  <% end %>
+</div>
