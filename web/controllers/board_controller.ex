@@ -16,7 +16,7 @@ defmodule Sq2.BoardController do
 
   def board_from_repo(board) do
     %{ "board" =>
-      %{ "id" => board.id, "type" => board.type, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
+      %{ "id" => board.id, "game_id"=> board.game_id, "type" => board.type, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
     }
   end
 

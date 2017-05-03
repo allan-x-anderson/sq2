@@ -264,7 +264,7 @@ function changeBoard(board_id) {
 
 }
 
-export function initPlayer(channel) {
+export function initPlayer(gameChannel, boardChannel) {
   let initialPresences = $('#current-player').data('initial-presences')
   let board = {
     connectedPlayers: initialPresences,
@@ -276,5 +276,5 @@ export function initPlayer(channel) {
   addJdenticon(currentPlayer)
   renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
-  initListeners(channel, board, currentPlayer)
+  initListeners(boardChannel, board, currentPlayer)
 }

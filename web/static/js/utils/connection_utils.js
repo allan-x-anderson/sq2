@@ -8,6 +8,10 @@ export function getBoardChannel (socket, id) {
   return socket.channel("board:" + id)
 }
 
+export function getGameChannel (socket, id) {
+  return socket.channel("game:" + id)
+}
+
 export function joinChannel(channel, token){
   channel.join({token: token})
     .receive("ok", resp => {

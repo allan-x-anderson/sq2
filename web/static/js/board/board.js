@@ -158,7 +158,7 @@ function initListeners(channel, board) {
   })
 }
 
-export function initBoard(channel) {
+export function initBoard(gameChannel, boardChannel) {
   let initialPresences = $('#board').data('initial-presences')
   console.log($('#board').data('board'));
   let board = {
@@ -173,5 +173,5 @@ export function initBoard(channel) {
   }
   boardRenderer.updateTileSize(board.connectedPlayersCount)
   boardRenderer.renderTotalPoints(board.points)
-  initListeners(channel, board)
+  initListeners(boardChannel, board)
 }

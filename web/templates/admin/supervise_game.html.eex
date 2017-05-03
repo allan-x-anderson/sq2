@@ -1,4 +1,4 @@
-<div id="admin">
+<div id="admin" data-game-id="<%= @game.id %>">
   <%= @game.name %>
   <%= inspect @online_players %>
     <%= for board <- @game.boards do %>

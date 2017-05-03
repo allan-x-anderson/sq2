@@ -2,7 +2,7 @@ defmodule Sq2.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-   #channel "room:*", Sq2.RoomChannel
+   channel "game:*", Sq2.GameChannel
    channel "board:*", Sq2.BoardChannel
 
   ## Transports

@@ -20,18 +20,25 @@ let admin = $("#admin")
 let board = $("#board")
 let player = $("#current-player")
 
-let boardChannel = undefined
-let adminChannels = undefined
+let boardChannel
+let gameChannel
+let adminBoardChannels
 
 if(board.length && board.data('board').board){
-  boardChannel = connectDisplay(socket)
-  initBoard(boardChannel)
+  let {game_channel: gameChannel,
+      board_channel: boardChannel}
+        = connectDisplay(socket)
+  initBoard(gameChannel, boardChannel)
 } else if(player.length) {
-  boardChannel = connectPlayer(socket)
-  initPlayer(boardChannel)
+  let {game_channel: gameChannel,
+      board_channel: boardChannel}
+       = connectPlayer(socket)
+  initPlayer(gameChannel, boardChannel)
 } else if(admin.length) {
-  adminChannels = connectAdmin(socket)
-  initAdmin(adminChannels)
+  let {game_channel: gameChannel,
+      board_channels: adminBoardChannels}
+        = connectAdmin(socket)
+  initAdmin(adminBoardChannels)
 }
 
 
