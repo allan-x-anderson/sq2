@@ -20,14 +20,14 @@ defmodule Sq2.BoardController do
     }
   end
 
-  def supervise(conn, %{"board_slug" => slug}) do
+  def display(conn, %{"board_slug" => slug}) do
     board = Repo.get_by!(Board, slug: slug)
             |> Sq2.Repo.preload([:roles])
     board_topic = "game:board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!
-    render conn, "supervise.html", board: board_from_repo(board), current_presences: current_presences
+    render conn, "display.html", board: board_from_repo(board), current_presences: current_presences
   end
 
   def find_percentage_of_players_in_role(role, players) do

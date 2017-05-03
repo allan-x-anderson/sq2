@@ -5,7 +5,7 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket, Presence} from "phoenix"
 
-import { connectSupervisor } from "./board/supervisor_connection"
+import { connectDisplay } from "./board/display_connection"
 import { initBoard } from "./board/board"
 import { initPlayer } from "./player/player"
 import { connectPlayer } from "./player/player_connection"
@@ -20,7 +20,7 @@ let player = $("#current-player")
 let boardChannel = undefined
 
 if(board.length && board.data('board').board){
-  boardChannel = connectSupervisor(socket)
+  boardChannel = connectDisplay(socket)
   initBoard(boardChannel)
 } else if(player.length) {
   boardChannel = connectPlayer(socket)

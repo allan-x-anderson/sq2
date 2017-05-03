@@ -21,11 +21,11 @@ defmodule Sq2.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    get "/boards/:board_slug", BoardController, :supervise
+    get "/boards/:board_slug", BoardController, :display
     get "/admin", AdminController, :index
     get "/join", BoardController, :join
     post "/join", BoardController, :join
-    get "/players/:player_id/change_board/:board_slug", BoardController :change_board
+    # get "/players/:player_id/change_board/:board_slug", BoardController :change_board
     #must be last
     get "/:board_slug", BoardController, :play
   end
