@@ -8,16 +8,20 @@ import {Socket, Presence} from "phoenix"
 import { connectDisplay } from "./board/display_connection"
 import { initBoard } from "./board/board"
 import { initPlayer } from "./player/player"
+import { initAdmin } from "./admin/admin"
 import { connectPlayer } from "./player/player_connection"
+import { connectAdmin } from "./admin/admin_connection"
 
 //let socket = new Socket("/socket", {params: {token: window.userToken}, logger: (kind, msg, data) => { console.log(`${kind}: ${msg}`, data) }} )
 let socket = new Socket("/socket", {params: {token: window.userToken}} )
 
 // let tile  = $('.tile')
+let admin = $("#admin")
 let board = $("#board")
 let player = $("#current-player")
 
 let boardChannel = undefined
+let adminChannels = undefined
 
 if(board.length && board.data('board').board){
   boardChannel = connectDisplay(socket)
@@ -25,6 +29,10 @@ if(board.length && board.data('board').board){
 } else if(player.length) {
   boardChannel = connectPlayer(socket)
   initPlayer(boardChannel)
+} else if(admin.length) {
+  adminChannels = connectAdmin(socket)
+  initAdmin(adminChannels)
 }
+
 
 export default socket

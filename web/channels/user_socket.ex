@@ -24,6 +24,10 @@ defmodule Sq2.UserSocket do
   def verify_user(socket, token) do
   end
 
+  def connect(%{"is_admin" => is_admin}, socket) do
+    {:ok, socket}
+  end
+
   def connect(%{"is_display" => is_display}, socket) do
     {:ok, socket}
   end
