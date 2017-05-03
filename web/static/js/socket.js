@@ -38,7 +38,7 @@ if(board.length && board.data('board').board){
   let {game_channel: gameChannel,
       board_channels: adminBoardChannels}
         = connectAdmin(socket)
-  initAdmin(adminBoardChannels)
+  initAdmin(gameChannel, adminBoardChannels)
 }
 
 

@@ -277,4 +277,7 @@ export function initPlayer(gameChannel, boardChannel) {
   renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
   initListeners(boardChannel, board, currentPlayer)
+  gameChannel.on("test", payload => {
+    console.log(payload.hi)
+  })
 }

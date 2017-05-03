@@ -12,12 +12,13 @@ function boardChannels(socket) {
   })
   return channels
 }
+
 export function connectAdmin(socket) {
   const gameId = $('#admin').data('game-id')
 
   let gameChannel = getGameChannel(socket, gameId)
   joinChannel(gameChannel)
-  
+
   let channels = boardChannels(socket)
 
   connectToSocket(socket, {is_admin: true})

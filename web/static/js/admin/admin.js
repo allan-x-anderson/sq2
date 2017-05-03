@@ -5,7 +5,6 @@ function renderConnectedPlayersCount(boardId, count){
 }
 
 function initListeners(channel, board) {
-  console.log(board);
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
@@ -19,7 +18,7 @@ function initListeners(channel, board) {
   })
 }
 
-export function initAdmin(boardChannels) {
+export function initAdmin(gameChannel, boardChannels) {
   let boards = []
   _.each(boardChannels, (channel, idx)=> {
     boards[idx] = boards[idx] || {}
@@ -28,4 +27,5 @@ export function initAdmin(boardChannels) {
     boards[idx].connectedPlayersCount = 0
     initListeners(channel, boards[idx])
   })
+  gameChannel.push("test", {hi: "hi"})
 }

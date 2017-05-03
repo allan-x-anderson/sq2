@@ -16,4 +16,14 @@ defmodule Sq2.GameChannel do
     socket = assign(socket, :game, game)
     {:ok, socket}
   end
+
+  def handle_in("test", %{"hi" => msg}, socket) do
+    broadcast! socket, "test", %{"hi" => msg}
+    {:noreply, socket}
+  end
+
+  def handle_out("test", payload, socket) do
+    push socket, "test", payload
+    {:noreply, socket}
+  end
 end
