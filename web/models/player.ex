@@ -5,6 +5,7 @@ defmodule Sq2.Player do
     field :name, :string
     belongs_to :role, Sq2.Role
     belongs_to :board, Sq2.Board
+    belongs_to :game, Sq2.Game
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule Sq2.Player do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :role_id, :board_id])
-    |> validate_required([:name, :role_id, :board_id])
+    |> cast(params, [:name, :role_id, :board_id, :game_id])
+    |> validate_required([:name, :game_id])
   end
 end

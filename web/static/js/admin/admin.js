@@ -27,5 +27,4 @@ export function initAdmin(gameChannel, boardChannels) {
     boards[idx].connectedPlayersCount = 0
     initListeners(channel, boards[idx])
   })
-  gameChannel.push("test", {hi: "hi"})
 }

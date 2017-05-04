@@ -24,8 +24,8 @@ defmodule Sq2.Router do
     get "/boards/:board_slug", BoardController, :display
     get "/admin", AdminController, :index
     get "/admin/supervise_game/:game_id", AdminController, :supervise_game
-    get "/join", BoardController, :join
-    post "/join", BoardController, :join
+    get "/join", GameController, :join
+    post "/join", GameController, :join
     get "/admin/games/:game_id/set_active_board/:board_id", AdminController, :set_active_board
     #must be last
     get "/:board_slug", BoardController, :play

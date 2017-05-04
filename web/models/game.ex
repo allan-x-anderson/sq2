@@ -6,6 +6,7 @@ defmodule Sq2.Game do
     field :name, :string
     field :slug, :string
     has_many :boards, Sq2.Board
+    has_many :players, Sq2.Player
 
     timestamps()
   end

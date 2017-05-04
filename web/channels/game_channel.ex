@@ -17,13 +17,13 @@ defmodule Sq2.GameChannel do
     {:ok, socket}
   end
 
-  def handle_in("test", %{"hi" => msg}, socket) do
-    broadcast! socket, "test", %{"hi" => msg}
+  def handle_in("board:changed", %{"board_slug" => board_slug}, socket) do
+    broadcast! socket, "board:changed", %{"board_slug" => board_slug}
     {:noreply, socket}
   end
 
-  def handle_out("test", payload, socket) do
-    push socket, "test", payload
+  def handle_out("board:changed", payload, socket) do
+    push socket, "board:changed", payload
     {:noreply, socket}
   end
 end

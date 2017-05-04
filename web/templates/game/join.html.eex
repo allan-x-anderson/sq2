@@ -6,7 +6,7 @@
   </div>
   <div class="form-input-group">
     <label for="slug">game name </label>
-    <input id="game_slug" type="text" name="board[slug]" value="">
+    <input id="game_slug" type="text" name="game[slug]" value="">
   </div>
   <div class="form-actions">
     <button type="submit" class="btn btn-go">Alllrighty Then!</button>

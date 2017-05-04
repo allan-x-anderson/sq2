@@ -1,6 +1,6 @@
 defmodule Sq2.Board do
   use Sq2.Web, :model
-  @derive {Poison.Encoder, only: [:name, :type, :slug, :players, :roles]}
+  # @derive {Poison.Encoder, only: [:name, :type, :slug, :players, :roles]}
 
   schema "boards" do
     field :name, :string

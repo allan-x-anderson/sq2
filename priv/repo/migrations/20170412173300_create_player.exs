@@ -6,6 +6,7 @@ defmodule Sq2.Repo.Migrations.CreatePlayer do
       add :name, :string
       add :role_id, references(:roles)
       add :board_id, references(:boards)
+      add :game_id, references(:games)
 
       timestamps()
     end

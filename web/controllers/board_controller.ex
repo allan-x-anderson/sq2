@@ -37,9 +37,11 @@ defmodule Sq2.BoardController do
         %{ "player"=> player_params } = params
         board = Repo.get_by!(Board, slug: board_params["slug"])
                 |> Sq2.Repo.preload([:roles, :players])
-        #get role
+
         params_with_role = RoleAssigner.add_role_to_params(board.roles, board.players, params["player"])
         params_with_board_and_role = Map.merge(params_with_role, %{"board_id" => board.id})
+        params_with_game_board_and_role = Map.merge(params_with_board_and_role, %{"game_id" => board.game_id})
+
         player_changeset = Player.changeset(%Player{}, params_with_board_and_role)
         case Repo.insert(player_changeset) do
           {:ok, player} ->

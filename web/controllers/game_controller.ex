@@ -1,7 +1,45 @@
 defmodule Sq2.GameController do
   use Sq2.Web, :controller
 
-  alias Sq2.Game
+  alias Sq2.{Repo, Game, Board, Player, RoleAssigner}
+
+  def join(conn, params) do
+    #if conn.current_user
+    case conn.method do
+      "POST" ->
+        %{ "game"=> game_params } = params
+        %{ "player"=> player_params } = params
+        game = Repo.get_by!(Game, slug: game_params["slug"])
+                |> Sq2.Repo.preload([:boards, :players])
+
+        player_params = Map.merge(player_params, %{"game_id" => game.id})
+
+        current_board = Repo.get_by(Board, game_id: game.id, is_active: true) |> Repo.preload([:roles, :players])
+
+        player_changeset =
+          case current_board do
+            nil ->
+              Player.changeset(%Player{}, player_params)
+            _ ->
+              params_with_role = RoleAssigner.add_role_to_params(current_board.roles, current_board.players, player_params)
+              params_with_board_and_role = Map.merge(params_with_role, %{"board_id" => current_board.id})
+              Player.changeset(%Player{}, params_with_board_and_role)
+          end
+        case Repo.insert(player_changeset) do
+          {:ok, player} ->
+            token = Phoenix.Token.sign(Sq2.Endpoint, "player", player.id)
+            conn
+            |> put_status(:created)
+            redirect conn, to: "/#{current_board.slug}?token=#{token}&board_id=#{player.board_id}&player_id=#{player.id}"
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> render(Sq2.ChangesetView, "error.html", changeset: changeset)
+            render conn, "join.html"
+        end
+      _ -> render conn, "join.html"
+    end
+  end
 
   def index(conn, _params) do
     games = Sq2.Repo.all(Game)

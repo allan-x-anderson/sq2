@@ -1,8 +1,10 @@
 import {Presence} from "phoenix"
 import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
 import { respondBoardTypeEvent } from "./board_type_events_responses"
-import * as Hammer from 'hammerjs';
-window.Hammer = Hammer.default;
+import { getParameterByName } from "../utils/utils.js"
+
+// import * as Hammer from 'hammerjs';
+// window.Hammer = Hammer.default;
 
 const BLOCKED_DATA = {
   'citizen': {
@@ -277,7 +279,8 @@ export function initPlayer(gameChannel, boardChannel) {
   renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
   initListeners(boardChannel, board, currentPlayer)
-  gameChannel.on("test", payload => {
-    console.log(payload.hi)
+  gameChannel.on("board:changed", payload => {
+    const token = getParameterByName("token")
+    window.location.replace(`/${payload.board_slug}?token=${token}&player_id=${currentPlayer.id}`)
   })
 }

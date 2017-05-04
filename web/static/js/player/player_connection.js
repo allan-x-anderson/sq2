@@ -3,11 +3,11 @@ import { connectToSocket, getBoardChannel, getGameChannel, joinChannel } from '.
 
 import { getParameterByName } from "../utils/utils.js"
 
-const boardId = getParameterByName("board_id")
-const token = getParameterByName("token")
 
 export function connectPlayer(socket) {
+  const token = getParameterByName("token")
   const gameId = parseInt($('#current-board').data('board').board.game_id)
+  const boardId = parseInt($('#current-board').data('board').board.id)
   let gameChannel = getGameChannel(socket, gameId)
   joinChannel(gameChannel)
 
