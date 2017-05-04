@@ -1,12 +1,13 @@
 <div id="admin" data-game-id="<%= @game.id %>">
-  <%= @game.name %>
-  <%= inspect @online_players %>
+  <%= @game.name %> | <%= @game.slug %>
     <%= for board <- @game.boards do %>
     <div id="board_<%= board.id %>" class="board">
-      <h2><%= board.name %></h2>
+      <h2><%= board.name %> | <%= board.slug %> Active: <%= board.is_active %></h2>
+      <p>
+        <a href="/admin/games/<%= @game.id %>/set_active_board/<%= board.id %>">SET ACTIVE</a>
+      </p>
       <% board_id = board.id %>
       <p>
-        player_ids: <%= Map.keys @online_players[board.id] %>
         currently_connected_players: <span class='connected-players-count'>0</span>
       </p>
     </div>
