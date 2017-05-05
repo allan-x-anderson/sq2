@@ -171,7 +171,11 @@ export function initBoard(gameChannel, boardChannel) {
     type: $('#board').data('board').board.type,
     points: 0
   }
+  
   boardRenderer.updateTileSize(board.connectedPlayersCount)
   boardRenderer.renderTotalPoints(board.points)
   initListeners(boardChannel, board)
+  gameChannel.on("board:changed", payload => {
+    window.location.replace(`/boards/${payload.board_slug}`)
+  })
 }

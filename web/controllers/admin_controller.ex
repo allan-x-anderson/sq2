@@ -10,12 +10,14 @@ defmodule Sq2.AdminController do
     render(conn, "index.html", games: games, boards: boards)
   end
 
+
   def supervise_game(conn, %{"game_id" => id}) do
-    game = Repo.get_by!(Game, id: id)
-           |> Repo.preload(boards: (from b in Board, order_by: [desc: b.inserted_at]))
-    # game = first Sq2.Repo.all(Game)
-    # board = Repo.get_by!(Board, slug: slug)
-    #         |> Sq2.Repo.preload([:roles])
+    game = Repo.one from game in Game,
+      where: game.id == ^id,
+      left_join: players in assoc(game, :players),
+      left_join: boards in assoc(game, :boards),
+      left_join: roles in assoc(boards, :roles),
+      preload: [boards: {boards, roles: roles}, players: players]
     online_players =
       game.boards
       |> Enum.reduce(Map.new(), fn(board, acc)->
@@ -24,9 +26,6 @@ defmodule Sq2.AdminController do
       end)
 
     game_json = Poison.encode! game
-    # current_presences =
-    #   Sq2.Presence.list(board_topic)
-    #   |> Poison.encode!
     render conn, "supervise_game.html", game: game
   end
 
@@ -39,22 +38,9 @@ defmodule Sq2.AdminController do
       |> Repo.update_all(set: [board_id: board.id, role_id: nil])
 
     board_topic = "board:" <> Integer.to_string(board.id)
-    current_presences =
-      Sq2.Presence.list(board_topic)
 
     board = Repo.get(Board, board.id) |> Repo.preload([:roles, :players])
-    IO.puts "LOLOLOLOLOLOLOLOy"
-    IO.puts "LOLOLOLOLOLOLOLOy"
-    IO.puts length board.roles
-    IO.puts length board.players
     RoleAssigner.assign_roles(board.roles, board.players, [])
-    #TODO this is either not working properly or not updating the user somewhere along the line
-    # Enum.each(Map.keys(current_presences), fn(key)->
-    #   player = Repo.get_by(Player, id: key)
-    #   changeset = Player.changeset(player, %{role_id: RoleAssigner.find_role(board.roles, board.players).id})
-    #   IO.inspect changeset
-    #   Repo.update!(changeset)
-    # end)
   end
 
   def toggle_board_is_active(conn, board) do
@@ -88,7 +74,6 @@ defmodule Sq2.AdminController do
         board = Repo.get_by!(Board, id: board_id) |> Repo.preload([:roles, :players])
         toggle_board_is_active(conn, board)
         move_players_to_board(board, game)
-        #TODO Emit game channel board changed
         Sq2.Endpoint.broadcast! "game:" <> game_id, "board:changed", %{"board_slug": board.slug}
         redirect conn, to: "/admin/supervise_game/#{game.id}"
     end

@@ -10,6 +10,14 @@
       <p>
         currently_connected_players: <span class='connected-players-count'>0</span>
       </p>
+      <ul>
+        <%= for role <- board.roles do %>
+          <li>
+            <strong><%= role.name %>:</strong>
+            <%= length Enum.filter(@game.players, fn(p)-> p.role_id == role.id end) %>
+          </li>
+        <% end %>
+      </ul>
     </div>
     <% end %>
 </div>

@@ -1,6 +1,14 @@
-<section id="debug">
+<section id="debug" class="nohide">
   <%= Poison.encode! @player %>
   <%= Poison.encode! @board %>
+</section>
+<section id="game-bar">
+  <div id="connected-players-count" class='hide' data-count="0"></div>
+  <div class="game-bar-left">
+    <%= @board["board"]["name"] %>
+  </div>
+  <div class="game-bar-right">
+  </div>
 </section>
 <div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= @current_presences %>"></div>
 <div style="display:none" id="current-board" data-board="<%= Poison.encode! @board %>"></div>
@@ -20,7 +28,7 @@
 <div class="modal modal-news hide">
   <div class="modal-content modal-news-summary">
     <h1></h1>
-    <p></p>
+    <p class="article-lorem"></p>
     <div class="modal-actions">
       <div class="button j-button-research">
         Research
@@ -40,6 +48,17 @@
       </div>
       <div class="button j-button-close">
         Close
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-role-intro hide">
+  <div class="modal-content">
+    <div class='j-filled-content'></div>
+    <div class="modal-actions">
+      <div class="button j-button-close">
+        Continue
       </div>
     </div>
   </div>

@@ -10,6 +10,32 @@ $board-height: 120px;
   height: 100%;
 }
 
+.board-display {
+  padding: 1em;
+  #game-bar {
+    position: fixed;
+    padding: 0;
+    bottom: 0;
+    left: 0;
+    .game-bar-left {
+      padding: 1em;
+      width: 70%;
+      background: $ta-blue-medium;
+      color: #000;
+      font-weight: bold;
+      float: left;
+    }
+    .game-bar-right {
+      width: 30%;
+      background: $ta-camo-green;
+      padding: 1em;
+      color: #000;
+      float: left;
+      font-weight: bold;
+    }
+  }
+}
+
 #board {
   height: 120px;
   margin-bottom: 1em;

@@ -1,6 +1,6 @@
 import {Presence} from "phoenix"
 import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
-import { respondBoardTypeEvent } from "./board_type_events_responses"
+import { respondBoardTypeEvent, fillAsciiTilesDivs } from "./board_type_events_responses"
 import { getParameterByName } from "../utils/utils.js"
 
 // import * as Hammer from 'hammerjs';
@@ -25,6 +25,12 @@ const BLOCKED_DATA = {
     message: 'You have a meeting with your finanacial planner',
     tiles_whitelist: ['blue', 'red', 'yellow', 'green']
   },
+  'researcher': {
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
+  },
+  'breibarter': {
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
+  },
 };
 
 const BOARD_TYPE_DATA = {
@@ -36,6 +42,16 @@ const BOARD_TYPE_DATA = {
   },
   "fake_news": {
     tile_ids: ['blue', 'red', 'yellow', 'green']
+  },
+}
+
+const ROLE_INTRO_DATA = {
+  "breibarter": {
+    html: `<p><strong>Shhhh!</strong></p>
+           <p>You are the publisher of BlahBart, if you convince people to
+           match the colours below you will get a special tile next round...
+           </p>
+           <div class='breibarter-colors'></div>`
   },
 }
 
@@ -55,6 +71,23 @@ const AFTER_PRESS_ANIMATION_OUT_CLASS = 'zoomIn'
 let pressStartEvent = deviceHasTouchEvents() ? 'touchstart' : 'mousedown'
 let pressEndEvent = deviceHasTouchEvents() ? 'touchend' : 'mouseup'
 
+
+function showRoleIntro(player, playerCount){
+  const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red red'
+  let roleIntroData = ROLE_INTRO_DATA[player.role]
+  if (roleIntroData) {
+    let $el = $('.modal-role-intro')
+    $el.removeClass('hide')
+    $el.find('.j-filled-content').html(roleIntroData.html)
+    $el.find('.j-filled-content').append($(`<div class='j-ascii-tiles'></div>`))
+    $el.find('.j-button-close').on('click', ()=> {
+      $el.addClass('hide')
+      $el.find('.j-button-close').off('click')
+      $(window).scrollTop();
+    })
+  }
+  fillAsciiTilesDivs(HEADLINES_SPECIAL_MATCHES_FAKE_NEWS, playerCount)
+}
 
 function checkBlocked (currentPlayer, playedTiles, maxTiles){
   if(DEV_DISABLE_ROLE_BLOCK == true) {
@@ -80,11 +113,13 @@ function addJdenticon(player) {
 }
 
 function updateBlockedWaitTime(currentPlayer, blockedForTurns) {
-  console.log(currentPlayer.queue.length, blockedForTurns);
-  let message = BLOCKED_DATA[currentPlayer.role].message
-  $('.block-play .blocked-image').attr('src', `images/blocked_play/${currentPlayer.role}.png`)
-  $('.block-play .blocked-message-container .blocked-message').html(message)
-  $('.block-play .blocked-wait-time').html(blockedForTurns + 1 - currentPlayer.queue.length)
+  let blockedData = BLOCKED_DATA[currentPlayer.role]
+  if(blockedData){
+    let message = blockedData.message
+    $('.block-play .blocked-image').attr('src', `images/blocked_play/${currentPlayer.role}.png`)
+    $('.block-play .blocked-message-container .blocked-message').html(message)
+    $('.block-play .blocked-wait-time').html(blockedForTurns + 2 - currentPlayer.queue.length)
+  }
 }
 
 function block (currentPlayer, connectedPlayersCount) {
@@ -103,10 +138,16 @@ function unblock (currentPlayer, connectedPlayersCount) {
 
 //TODO this is duped in board
 function renderPresence(connectedPlayers) {
-  $('#presences').html("")
-  Object.keys(connectedPlayers).forEach(function(playerId){
-    $('#presences').append($(`<h2>${playerId}</h2>`))
-  })
+  // $('#presences').html("")
+  // Object.keys(connectedPlayers).forEach(function(playerId){
+  //   $('#presences').append($(`<h2>${playerId}</h2>`))
+  // })
+  $('#connected-players-count').data('count', Object.keys(connectedPlayers).length)
+  // console.log(
+  //   $('#connected-players-count'),
+  //   Object.keys(connectedPlayers).length,
+  //   $('#connected-players-count').data('count')
+  // )
 }
 
 function absorbEvent_(event) {
@@ -279,6 +320,7 @@ export function initPlayer(gameChannel, boardChannel) {
   renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
   initListeners(boardChannel, board, currentPlayer)
+  showRoleIntro(currentPlayer, board.connectedPlayersCount)
   gameChannel.on("board:changed", payload => {
     const token = getParameterByName("token")
     window.location.replace(`/${payload.board_slug}?token=${token}&player_id=${currentPlayer.id}`)

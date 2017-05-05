@@ -92,7 +92,7 @@ $tile-green: #7BDE7A;
   height: 100%;
   background: #000;
   color: #fff;
-  opacity: 0.9;
+  opacity: 0.95;
   padding: 2em;
   font-size: 1.4em;
   text-align: center;
@@ -184,5 +184,24 @@ $tile-green: #7BDE7A;
   canvas {
     display: block;
     float: left;
+  }
+}
+.j-ascii-tiles {
+  display: inline-block;
+}
+.ascii-tile {
+  display: inline-block;
+  font-size: 2em;
+  &.ascii-tile-blue {
+    color: $tile-blue;
+  }
+  &.ascii-tile-red {
+    color: $tile-red;
+  }
+  &.ascii-tile-yellow {
+    color: $tile-yellow;
+  }
+  &.ascii-tile-green {
+    color: $tile-green;
   }
 }

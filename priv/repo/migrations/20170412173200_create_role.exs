@@ -4,6 +4,7 @@ defmodule Sq2.Repo.Migrations.CreateRole do
   def change do
     create table(:roles) do
       add :name, :string
+      add :percentage_of_players, :integer
       add :board_id, references(:boards)
 
       timestamps()

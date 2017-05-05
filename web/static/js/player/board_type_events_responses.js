@@ -1,6 +1,6 @@
 import { randomInt, spliceString } from '../utils/utils'
-const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red red'
-const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red blue red green'
+const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
+const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red yellow green'
 const RESEARCH_SOURCES = ['Email recieved from the editor of The Times', 'Reading cited references', 'Message recieved from a trusted friend', 'Phone conversation with head of department']
 const BOARD_TYPE_EVENTS_RESPONDERS = {
   'fake_news': {
@@ -8,10 +8,10 @@ const BOARD_TYPE_EVENTS_RESPONDERS = {
       responder: respondFakeNews,
       meta: {
         headlines: [
-          `${HEADLINES_SPECIAL_MATCHES_REAL_NEWS} Is a TRAP from the CIA!`,
-          `The "Scientists" say ${HEADLINES_SPECIAL_MATCHES_REAL_NEWS} will get you extra points`,
-          `Patriot uncovers ${HEADLINES_SPECIAL_MATCHES_FAKE_NEWS}, fight the system!`,
-          `${HEADLINES_SPECIAL_MATCHES_FAKE_NEWS.toUpperCase()} will cure cancer`
+          `<div class='j-ascii-tiles ascii-real-news'></div> Is a TRAP from the CIA!`,
+          `The "Scientists" say <div class='j-ascii-tiles ascii-real-news'></div> will get you extra points`,
+          `Patriot uncovers <div class='j-ascii-tiles ascii-fake-news'></div>, fight the system!`,
+          `<div class='j-ascii-tiles ascii-fake-news'></div> will cure cancer`
         ],
         research_answer_texts: [
           'after vigorous testing Scientists from both Harvard, and Oxford could not reproduce the results, thus disproving the misleading article ',
@@ -23,10 +23,10 @@ const BOARD_TYPE_EVENTS_RESPONDERS = {
       responder: respondRealNews,
       meta: {
         headlines: [
-          `First bipartisan deal agrees on ${HEADLINES_SPECIAL_MATCHES_REAL_NEWS}`,
-          `Ancient DNA shows ${HEADLINES_SPECIAL_MATCHES_REAL_NEWS} can aid society in it's battle against apathy`,
-          `Some surprising results out of harvard show ${HEADLINES_SPECIAL_MATCHES_FAKE_NEWS} not good for society`,
-          `Large turnout to march in opposition of ${HEADLINES_SPECIAL_MATCHES_FAKE_NEWS}`,
+          `First bipartisan deal agrees on <div class='j-ascii-tiles ascii-real-news'></div>`,
+          `Ancient DNA shows <div class='j-ascii-tiles ascii-real-news'></div> can aid society in it's battle against apathy`,
+          `Some surprising results out of harvard show <div class='j-ascii-tiles ascii-fake-news'></div> not good for society`,
+          `Large turnout to march in opposition of <div class='j-ascii-tiles ascii-fake-news'></div>`,
         ],
         research_answer_texts: [
           'citing results from the peer reviewed journals nature, and science, the head of Biology at FU Berlin agrees with us that the following article is indeed true.',
@@ -37,8 +37,36 @@ const BOARD_TYPE_EVENTS_RESPONDERS = {
   }
 }
 
+let lorem = new Lorem;
+
+export function repeatPatternUntil (pattern, length) {
+  let patternAry = pattern.split(' ')
+  let repeatedPattern = []
+  for (var i = 0; i < length; i++) {
+    repeatedPattern.push(patternAry[i % (patternAry.length)])
+  }
+  return repeatedPattern
+};
+
+function generateAsciiTiles(tileColorsArray) {
+  return _.map(tileColorsArray, (color)=> {
+    return `<span class='ascii-tile ascii-tile-${color}'>&#9632;</span>`
+  })
+}
+
+export function fillAsciiTilesDivs(startPattern, playersCount){
+  let $el = $('.j-ascii-tiles')
+  if( $el.hasClass('ascii-fake-news') ) {
+    startPattern = HEADLINES_SPECIAL_MATCHES_FAKE_NEWS
+  } else if ( $el.hasClass('ascii-real-news') ){
+    startPattern = HEADLINES_SPECIAL_MATCHES_REAL_NEWS
+  }
+  let asciiTilesArray = repeatPatternUntil(startPattern, playersCount)
+  let asciiTilesHtml = generateAsciiTiles(asciiTilesArray).join('')
+  $('.j-ascii-tiles').html($(asciiTilesHtml))
+}
+
 function generateResearch(researchClicksCount, resultShowsAfter, resultText){
-  let lorem = new Lorem;
   let researchParagraphs = $(lorem.createText(randomInt(2, 6), 1));
   let randomParagraphIdx = randomInt(0, researchParagraphs.length - 1)
   if(researchClicksCount > resultShowsAfter){
@@ -53,11 +81,14 @@ function generateResearch(researchClicksCount, resultShowsAfter, resultText){
 }
 
 function renderNews(type, responseMeta, triggeredCount){
+  let currentPlayer = $('#current-player').data('current-player').player
   let $el = $('.modal-news')
   let researchClicksCount = 0;
   let resultShowsAfter = randomInt(2, 5);
   $el.removeClass('hide')
   $el.find('.modal-content h1').html(responseMeta.headlines[triggeredCount - 1])
+  $el.find('.modal-content .article-lorem').html($(lorem.createText(2, 1)))
+
 
   $el.find('.j-button-close').on('click', ()=> {
     $el.addClass('hide')
@@ -68,16 +99,21 @@ function renderNews(type, responseMeta, triggeredCount){
     $(window).scrollTop();
   })
 
-  $el.find('.j-button-research').on('click', ()=> {
-    researchClicksCount++
-    $el.find('.modal-news-summary').addClass('hide')
-    $el.animate({ scrollTop: 0 }, "fast");
-    $el.find('.modal-news-research').removeClass('hide')
-    let answerText = _.sample(responseMeta.research_answer_texts) + responseMeta.headlines[triggeredCount - 1]
-    let researchParagraphs = generateResearch(researchClicksCount, resultShowsAfter, answerText)
-    $el.find('.modal-news-research .modal-research-text').html(researchParagraphs)
-  })
-
+  if(currentPlayer.role !== 'researcher') {
+    $el.find('.j-button-research').addClass('hide')
+  } else {
+    $el.find('.j-button-research').on('click', ()=> {
+      researchClicksCount++
+      $el.find('.modal-news-summary').addClass('hide')
+      $el.animate({ scrollTop: 0 }, "fast");
+      $el.find('.modal-news-research').removeClass('hide')
+      let answerText = _.sample(responseMeta.research_answer_texts) + responseMeta.headlines[triggeredCount - 1]
+      let researchParagraphs = generateResearch(researchClicksCount, resultShowsAfter, answerText)
+      $el.find('.modal-news-research .modal-research-text').html(researchParagraphs)
+      fillAsciiTilesDivs(undefined, $('#connected-players-count').data('count'))
+    })
+  }
+  fillAsciiTilesDivs(undefined, $('#connected-players-count').data('count'))
 }
 
 function respondFakeNews(responseMeta, triggeredCount){

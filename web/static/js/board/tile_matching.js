@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { repeatPatternUntil } from '../player/board_type_events_responses'
 const CONSIDER_GROUPED_WITHIN_MS = 1000;
 const LONG_PRESS_DURATION = 1000;
 const LONGER_PRESS_DURATION = 3000;
@@ -13,15 +14,17 @@ const POINTS_LONGER_PRESS_MULTIPLIER = 4
 // TODO Probably need 6 players to make it random enough
 // TODO Think about how to make it work for anything following the pattern
 // Potentially just use wording red blue green then anything
+const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
+const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red yellow green'
 const BOARD_TYPE_SPECIAL_MATCHES = {
   fake_news: [
     {
-      pattern: '(green blue red red).*',
+      pattern: HEADLINES_SPECIAL_MATCHES_FAKE_NEWS,
       points: -100,
       name: 'special#fake_news'
     },
     {
-      pattern: '(red blue red green).*',
+      pattern: HEADLINES_SPECIAL_MATCHES_REAL_NEWS,
       points: 70,
       name: 'special_real_news'
     }
@@ -33,15 +36,15 @@ function foundPatternInColors(pattern, colorsString) {
   return colorsString.match(regexp)
 }
 
-function checkSpecialMatches(tiles, boardType) {
+function checkSpecialMatches(tiles, boardType, maxTiles) {
   let specialMatchesForBoard = BOARD_TYPE_SPECIAL_MATCHES[boardType]
   console.log("SPECIAL", specialMatchesForBoard, boardType);
   if(specialMatchesForBoard){
     let tileColorsAsString = _.map(tiles, 'color').join(' ')
-    console.log(specialMatchesForBoard, tileColorsAsString);
     let specialMatch
     let specialMatches = _.filter(specialMatchesForBoard, specialMatch => {
-      return foundPatternInColors(specialMatch.pattern, tileColorsAsString)
+      console.log(tileColorsAsString, repeatPatternUntil(specialMatch.pattern, maxTiles).join(' '));
+      return repeatPatternUntil(specialMatch.pattern, maxTiles).join(' ') === tileColorsAsString
     })
     if(specialMatches){
       return _.first(specialMatches)
@@ -124,7 +127,7 @@ export function checkMatch(tiles, maxTiles, board){
   let matchName = null
   let points = 0
   if(tiles.length === maxTiles){
-    let specialMatch = checkSpecialMatches(tiles, board.type)
+    let specialMatch = checkSpecialMatches(tiles, board.type, maxTiles)
     if ( specialMatch ) {
       matchName = specialMatch.name
       points += specialMatch.points

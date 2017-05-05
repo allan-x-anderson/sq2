@@ -1,19 +1,35 @@
 defmodule Sq2.RoleAssigner do
   alias Sq2.{Player, Repo}
-  def find_percentage_of_players_in_role(role, players) do
+  def percentage_of_players_in_role(role, players) do
     matches = Enum.filter(players, fn(%Sq2.Player{role_id: role_id}) -> role_id == role.id end)
-    %{role: role, percent_filled: (length(matches)  / length(players)) * 100 }
+    case length matches do
+      0 ->
+        0
+      _ ->
+        (length(matches)  / length(players)) * 100
+    end
+
   end
 
-  def find_role(roles, players) when length(players) == 0 do
-    List.first(roles)
+  def roles_not_at_capacity(roles, players) do
+    Enum.reduce(roles, [], fn(role, acc)->
+      role_available = case percentage_of_players_in_role(role, players) <= role.percentage_of_players do
+        true -> [role]
+        _ -> []
+      end
+      acc ++ role_available
+    end)
   end
 
   def find_role(roles, players) do
-    role_percentages = Enum.map(roles, fn(role)-> find_percentage_of_players_in_role(role, players) end)
-    least_filled = Enum.min_by(role_percentages, fn(rp)-> rp.percent_filled end)
-    IO.inspect least_filled.role
-    least_filled.role
+    roles_percentage_filled_difference_from_max = Enum.map(roles, fn(role)->
+      IO.puts "POP: "
+      IO.puts role.percentage_of_players
+      IO.puts "- PIR:"
+      IO.puts percentage_of_players_in_role(role, players)
+      %{ role: role, percent_filled: role.percentage_of_players - percentage_of_players_in_role(role, players) }
+    end)
+    Enum.max_by(roles_percentage_filled_difference_from_max, fn(rp)-> rp.percent_filled end).role
   end
 
   def update_role(player, role) do
@@ -23,17 +39,13 @@ defmodule Sq2.RoleAssigner do
   end
 
   def assign_roles(roles, [], assigned_players) do
-    IO.puts "LAST"
     nil
   end
 
-  def assign_roles(roles, players, [] = assigned_players) do
-    IO.puts "ONE PLAYER"
-    IO.puts "^^^^^^^"
+  def assign_roles(roles, players, []) do
     [player | remaining_players] = players
-    role = List.first(roles)
+    role = Enum.random(roles)
     player = update_role(player, role)
-    IO.inspect player
     assigned_players = [] ++ [player]
     assign_roles(roles, remaining_players, assigned_players)
   end
@@ -41,7 +53,6 @@ defmodule Sq2.RoleAssigner do
   def assign_roles(roles, players, assigned_players) do
     [player | remaining_players] = players
     role = find_role(roles, assigned_players)
-    # role = List.first(roles)
     player = update_role(player, role)
     assigned_players = assigned_players ++ [player]
     assign_roles(roles, remaining_players, assigned_players)
