@@ -36,20 +36,25 @@ defmodule Sq2.AdminController do
 
   def move_players_to_board(board, game) do
     players = from(p in Player, where: p.game_id == ^game.id)
-      |> Repo.update_all(set: [board_id: board.id])
+      |> Repo.update_all(set: [board_id: board.id, role_id: nil])
 
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
 
-    #TODO this is either not working properly or not updating the user somewhere along the line 
-    IO.inspect RoleAssigner.find_role(board.roles, board.players)
-    Enum.each(Map.keys(current_presences), fn(key)->
-      player = Repo.get_by(Player, id: key)
-      changeset = Player.changeset(player, %{role_id: RoleAssigner.find_role(board.roles, board.players).id})
-      IO.inspect changeset
-      Repo.update!(changeset)
-    end)
+    board = Repo.get(Board, board.id) |> Repo.preload([:roles, :players])
+    IO.puts "LOLOLOLOLOLOLOLOy"
+    IO.puts "LOLOLOLOLOLOLOLOy"
+    IO.puts length board.roles
+    IO.puts length board.players
+    RoleAssigner.assign_roles(board.roles, board.players, [])
+    #TODO this is either not working properly or not updating the user somewhere along the line
+    # Enum.each(Map.keys(current_presences), fn(key)->
+    #   player = Repo.get_by(Player, id: key)
+    #   changeset = Player.changeset(player, %{role_id: RoleAssigner.find_role(board.roles, board.players).id})
+    #   IO.inspect changeset
+    #   Repo.update!(changeset)
+    # end)
   end
 
   def toggle_board_is_active(conn, board) do
