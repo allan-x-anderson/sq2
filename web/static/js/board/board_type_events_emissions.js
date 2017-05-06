@@ -1,15 +1,4 @@
-const BOARD_TYPE_EVENTS = {
-  'fake_news': {
-    'fake-news-published': {
-      every_nth_round: 4,
-      starts_after_round: 4
-    },
-    'real-news-published': {
-      every_nth_round: 8,
-      starts_after_round: -6
-    }
-  }
-}
+import { BOARD_TYPE_EVENTS } from './board_constants.js'
 
 let emittedEventCounts = {}
 
@@ -19,6 +8,7 @@ function willTrigger(eventsData, event, currentRound, playedTiles, connectedPlay
   let nextRoundStartsAtTiles = oneRound + currentRound * connectedPlayers
   // TODO add a flag to board type event data to show it's round based
   if (playedTiles === roundStartedAtTiles){
+    console.info("HIT", )
     return currentRound > eventsData[event].starts_after_round && (currentRound - Math.abs(eventsData[event].starts_after_round)) % eventsData[event].every_nth_round === 0
   }
 }
@@ -36,7 +26,6 @@ function trigger(channel, boardType, event){
     event_name: event,
     triggered_count: emittedEventCounts[boardType][event]
   }
-  console.log("TRIGGERING", event, payload);
   channel.push(event, payload)
 }
 

@@ -56,13 +56,20 @@ $board-height: 120px;
 
 
 #match-hero {
+  position: absolute;
+  top: 10%;
+  left: 25%;
+  z-index: 100;
   text-align: center;
   width: 50%;
-  margin: 0 auto;
-  margin-top: 22%;
+  -webkit-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
+  -moz-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
+  box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
   img {
-    width: 100%;
-    margin-bottom: 1em;
+    width: 80%;
+    height: auto;
+    max-height: 500px;
+    margin: 1em 0;
   }
 }
 

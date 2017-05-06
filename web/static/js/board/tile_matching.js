@@ -1,35 +1,18 @@
 import moment from 'moment'
 import { repeatPatternUntil } from '../player/board_type_events_responses'
-const CONSIDER_GROUPED_WITHIN_MS = 1000;
-const LONG_PRESS_DURATION = 1000;
-const LONGER_PRESS_DURATION = 3000;
-
-const POINTS_SINGLE_COLOR = 1
-const POINTS_ALTERNATING_COLOR_POINTS = 2
-const POINTS_TIMED_TOGETHER = 4
-const POINTS_LONG_PRESS_MULTIPLIER = 3
-const POINTS_LONGER_PRESS_MULTIPLIER = 4
-
-// TODO More reason to manage constants
-// TODO Probably need 6 players to make it random enough
-// TODO Think about how to make it work for anything following the pattern
-// Potentially just use wording red blue green then anything
-const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
-const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red yellow green'
-const BOARD_TYPE_SPECIAL_MATCHES = {
-  fake_news: [
-    {
-      pattern: HEADLINES_SPECIAL_MATCHES_FAKE_NEWS,
-      points: -100,
-      name: 'special#fake_news'
-    },
-    {
-      pattern: HEADLINES_SPECIAL_MATCHES_REAL_NEWS,
-      points: 70,
-      name: 'special_real_news'
-    }
-  ]
-}
+import {
+  CONSIDER_GROUPED_WITHIN_MS,
+  LONG_PRESS_DURATION,
+  LONGER_PRESS_DURATION,
+  POINTS_SINGLE_COLOR,
+  POINTS_ALTERNATING_COLOR_POINTS,
+  POINTS_TIMED_TOGETHER,
+  POINTS_LONG_PRESS_MULTIPLIER,
+  POINTS_LONGER_PRESS_MULTIPLIER,
+  HEADLINES_SPECIAL_MATCHES_FAKE_NEWS,
+  HEADLINES_SPECIAL_MATCHES_REAL_NEWS,
+  BOARD_TYPE_SPECIAL_MATCHES
+} from '../constants'
 
 function foundPatternInColors(pattern, colorsString) {
   let regexp = new RegExp(pattern, 'i')

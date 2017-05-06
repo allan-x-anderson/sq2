@@ -1,30 +1,21 @@
 import { createJdenticon } from "../utils/utils"
+import { randomInt } from "../utils/utils"
 import { alreadyMatched } from "./tile_matching"
 
-const ANIMATE_IN_CLASS = "slide-in-right";
-const ANIMATE_OUT_CLASS = "slide-out-left";
-const ANIMATE_MATCH_CLASS = "fade-out-fwd";
-
-const ANIMATE_HERO_IN_CLASS = "bounce-in-fwd";
-const ANIMATE_HERO_IN_TIMED_TOGETHER_CLASS = "rotateIn";
-const ANIMATE_HERO_IN_LONG_PRESS_CLASS = "rollIn";
-const ANIMATE_HERO_IN_LONGER_PRESS_CLASS = "lightSpeedIn";
-const ANIMATE_HERO_OUT_CLASS = "fade-out-fwd";
-
-const ANIMATE_FOUND_MATCH_OUT_CLASS = "fadeOut";
-
-
-const MATCH_ANIMATION_TIME = 300;
-const HERO_SHOW_TIME = 2500;
-
-const MATCH_HERO_IMAGES = {
-  single_color_blue: "cute-cat",
-  single_color_red: "jumping-cat",
-  single_color_yellow: "adorable-cat",
-  single_color_green: "grey-cat",
-  alternating_colors_blue_yellow: "europe-collage",
-  alternating_colors_yellow_blue: "europe-space-night"
-}
+import {
+  ANIMATE_IN_CLASS,
+  ANIMATE_OUT_CLASS,
+  ANIMATE_MATCH_CLASS,
+  ANIMATE_HERO_IN_CLASS,
+  ANIMATE_HERO_IN_TIMED_TOGETHER_CLASS,
+  ANIMATE_HERO_IN_LONG_PRESS_CLASS,
+  ANIMATE_HERO_IN_LONGER_PRESS_CLASS,
+  ANIMATE_HERO_OUT_CLASS,
+  ANIMATE_FOUND_MATCH_OUT_CLASS,
+  MATCH_ANIMATION_TIME,
+  HERO_SHOW_TIME,
+  MATCH_HERO_IMAGES
+} from './board_constants'
 
 // Dev util
 function renderPresence(connectedPlayers) {
@@ -138,12 +129,19 @@ function renderMatchHero(match) {
   let timedTogether = match.name.split('-')[0] === "timed_together"
   let longPressClass = waslongPress == null ? '' : `${match.name.split('-')[0].replace('_', '-')}`
   let timedTogetherClass = timedTogether ? 'timed-together' : ''
+  let matchHeroImg = function(matchName){
+    let img = MATCH_HERO_IMAGES[match.name]
+    if(!img){
+      img = `random/${randomInt(1, 34)}`
+    }
+    return `<img src='/images/match_heroes/${img}.png' />`
+  }
   console.log("HERO MATCH", match, waslongPress, timedTogether);
   let html = `
     <div class='match-hero ${longPressClass} ${timedTogetherClass}'>
       <div class='match-hero-tiles'></div>
       <div class='match-hero-image'>
-        <img src='/images/match_heroes/${MATCH_HERO_IMAGES[match.name]}.png' />
+      ${matchHeroImg(match.name)}
       </div>
     </div>
   `

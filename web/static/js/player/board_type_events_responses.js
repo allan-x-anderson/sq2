@@ -1,41 +1,13 @@
 import { randomInt, spliceString } from '../utils/utils'
-const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
-const HEADLINES_SPECIAL_MATCHES_REAL_NEWS = 'red yellow green'
-const RESEARCH_SOURCES = ['Email recieved from the editor of The Times', 'Reading cited references', 'Message recieved from a trusted friend', 'Phone conversation with head of department']
-const BOARD_TYPE_EVENTS_RESPONDERS = {
-  'fake_news': {
-    'fake-news-published': {
-      responder: respondFakeNews,
-      meta: {
-        headlines: [
-          `<div class='j-ascii-tiles ascii-real-news'></div> Is a TRAP from the CIA!`,
-          `The "Scientists" say <div class='j-ascii-tiles ascii-real-news'></div> will get you extra points`,
-          `Patriot uncovers <div class='j-ascii-tiles ascii-fake-news'></div>, fight the system!`,
-          `<div class='j-ascii-tiles ascii-fake-news'></div> will cure cancer`
-        ],
-        research_answer_texts: [
-          'after vigorous testing Scientists from both Harvard, and Oxford could not reproduce the results, thus disproving the misleading article ',
-          'our editors could not find any refrence to the author in state or federal records, we consider the following article fake: ',
-        ]
-      }
-    },
-    'real-news-published': {
-      responder: respondRealNews,
-      meta: {
-        headlines: [
-          `First bipartisan deal agrees on <div class='j-ascii-tiles ascii-real-news'></div>`,
-          `Ancient DNA shows <div class='j-ascii-tiles ascii-real-news'></div> can aid society in it's battle against apathy`,
-          `Some surprising results out of harvard show <div class='j-ascii-tiles ascii-fake-news'></div> not good for society`,
-          `Large turnout to march in opposition of <div class='j-ascii-tiles ascii-fake-news'></div>`,
-        ],
-        research_answer_texts: [
-          'citing results from the peer reviewed journals nature, and science, the head of Biology at FU Berlin agrees with us that the following article is indeed true.',
-          'in an interview the week following the publication of our article, Chancelor Muggle confirmed the validity of our claims.  Read again: '
-        ]
-      }
-    }
-  }
-}
+import {
+  RESEARCH_SOURCES,
+  BOARD_TYPE_EVENTS_RESPONDERS,
+} from '../board/board_constants'
+
+import {
+  HEADLINES_SPECIAL_MATCHES_FAKE_NEWS,
+  HEADLINES_SPECIAL_MATCHES_REAL_NEWS,
+} from '../constants'
 
 let lorem = new Lorem;
 
@@ -60,6 +32,8 @@ export function fillAsciiTilesDivs(startPattern, playersCount){
     startPattern = HEADLINES_SPECIAL_MATCHES_FAKE_NEWS
   } else if ( $el.hasClass('ascii-real-news') ){
     startPattern = HEADLINES_SPECIAL_MATCHES_REAL_NEWS
+  } else {
+    console.error('TMP should have class', $el)
   }
   let asciiTilesArray = repeatPatternUntil(startPattern, playersCount)
   let asciiTilesHtml = generateAsciiTiles(asciiTilesArray).join('')
@@ -86,6 +60,7 @@ function renderNews(type, responseMeta, triggeredCount){
   let researchClicksCount = 0;
   let resultShowsAfter = randomInt(2, 5);
   $el.removeClass('hide')
+  console.log(responseMeta, triggeredCount);
   $el.find('.modal-content h1').html(responseMeta.headlines[triggeredCount - 1])
   $el.find('.modal-content .article-lorem').html($(lorem.createText(2, 1)))
 
@@ -116,17 +91,17 @@ function renderNews(type, responseMeta, triggeredCount){
   fillAsciiTilesDivs(undefined, $('#connected-players-count').data('count'))
 }
 
-function respondFakeNews(responseMeta, triggeredCount){
-  renderNews('fake-news', responseMeta, triggeredCount)
-}
-
-function respondRealNews(responseMeta, triggeredCount){
-  renderNews('real-news', responseMeta, triggeredCount)
-}
-
 export function respondBoardTypeEvent(payload) {
   let response = BOARD_TYPE_EVENTS_RESPONDERS[payload.board_type][payload.event_name]
-  if(response) {
-    response.responder(response.meta, payload.triggered_count)
+  if (response) {
+    if (payload.board_type == 'fake_news') {
+      if (payload.event_name == 'fake-news-published') {
+        renderNews('fake-news', response.meta, payload.triggered_count)
+      } else if (payload.event_name == 'real-news-published'){
+        renderNews('real-news', response.meta, payload.triggered_count)
+      } else {
+        console.error("No event matches for board_type: fake_news on", payload.event_name)
+      }
+    }
   }
 }

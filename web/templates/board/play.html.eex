@@ -3,14 +3,14 @@
   <%= Poison.encode! @board %>
 </section>
 <section id="game-bar">
-  <div id="connected-players-count" class='hide' data-count="0"></div>
+  <div id="connected-players-count" class='hide' data-count="<%= length Map.keys(@current_presences) %>"></div>
   <div class="game-bar-left">
     <%= @board["board"]["name"] %>
   </div>
   <div class="game-bar-right">
   </div>
 </section>
-<div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= @current_presences %>"></div>
+<div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= Poison.encode! @current_presences %>"></div>
 <div style="display:none" id="current-board" data-board="<%= Poison.encode! @board %>"></div>
 <section id="player-hand"></section>
 

@@ -3,79 +3,29 @@ import {deviceHasTouchEvents, createJdenticon} from "../utils/utils"
 import { respondBoardTypeEvent, fillAsciiTilesDivs } from "./board_type_events_responses"
 import { getParameterByName } from "../utils/utils.js"
 
+
+
 // import * as Hammer from 'hammerjs';
 // window.Hammer = Hammer.default;
-
-const BLOCKED_DATA = {
-  'citizen': {
-    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
-  },
-  'poor': {
-    percentage_of_turns: 1,
-    message: 'You go to work',
-    tiles_whitelist: ['blue']
-  },
-  'middle_class': {
-    percentage_of_turns: 0.5,
-    message: 'You go to your office',
-    tiles_whitelist: ['blue', 'yellow']
-  },
-  'rich': {
-    percentage_of_turns: 0.25,
-    message: 'You have a meeting with your finanacial planner',
-    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
-  },
-  'researcher': {
-    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
-  },
-  'breibarter': {
-    tiles_whitelist: ['blue', 'red', 'yellow', 'green']
-  },
-};
-
-const BOARD_TYPE_DATA = {
-  "anarchy": {
-    tile_ids: ['blue', 'red', 'yellow', 'green']
-  },
-  "inequality": {
-    tile_ids: ['blue', 'red', 'yellow', 'green']
-  },
-  "fake_news": {
-    tile_ids: ['blue', 'red', 'yellow', 'green']
-  },
-}
-
-const ROLE_INTRO_DATA = {
-  "breibarter": {
-    img: 'breibarter.jpg',
-    html: `<div class='role-intro-image'></div>
-           <p><strong>Shhhh!</strong></p>
-           <p>You are the publisher of BlahBart, if you convince people to
-           match the colours below you will get a special tile next round...
-           </p>
-           <div class='breibarter-colors'></div>`
-  },
-}
-
-const DEV_DISABLE_ROLE_BLOCK = false;
-
-
-const TILE_WIDTH = $('.tile').first().outerWidth();
-const TILE_HEIGHT = $('.tile').first().outerHeight();
-const LONG_PRESS_INTERVAL = 100
-const ESCALATE_STAGE_1_CLASS = 'pulse'
-const ESCALATE_STAGE_2_CLASS = 'pulse'
-
-const AFTER_PRESS_ANIMATION_TIME = 200
-const AFTER_PRESS_ANIMATION_IN_CLASS = 'zoomOut'
-const AFTER_PRESS_ANIMATION_OUT_CLASS = 'zoomIn'
+import {
+ BLOCKED_DATA,
+ BOARD_TYPE_DATA,
+ ROLE_INTRO_DATA,
+ DEV_DISABLE_ROLE_BLOCK,
+ TILE_WIDTH,
+ TILE_HEIGHT,
+ LONG_PRESS_INTERVAL,
+ ESCALATE_STAGE_1_CLASS,
+ ESCALATE_STAGE_2_CLASS,
+ AFTER_PRESS_ANIMATION_TIME,
+ AFTER_PRESS_ANIMATION_IN_CLASS,
+ AFTER_PRESS_ANIMATION_OUT_CLASS
+} from './player_constants'
 
 let pressStartEvent = deviceHasTouchEvents() ? 'touchstart' : 'mousedown'
 let pressEndEvent = deviceHasTouchEvents() ? 'touchend' : 'mouseup'
 
-
 function showRoleIntro(player, playerCount){
-  const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
   let roleIntroData = ROLE_INTRO_DATA[player.role]
   if (roleIntroData) {
     let $el = $('.modal-role-intro')
@@ -83,15 +33,14 @@ function showRoleIntro(player, playerCount){
     $el.find('.j-filled-content').html(roleIntroData.html)
     let roleIntroImage = $(`<img src='/images/role_intros/${roleIntroData.img}' />`)
     $el.find('.j-filled-content .role-intro-image').html(roleIntroImage)
-    $el.find('.j-filled-content p').last().append($(`<div class='j-ascii-tiles'></div>`))
+    $el.find('.j-filled-content p').last().append($(`<div class='j-ascii-tiles ascii-fake-news'></div>`))
     $el.find('.j-button-close').on('click', ()=> {
       $el.addClass('hide')
       $el.find('.j-button-close').off('click')
       $(window).scrollTop();
     })
+    fillAsciiTilesDivs(undefined, playerCount)
   }
-  console.log(playerCount);
-  fillAsciiTilesDivs(HEADLINES_SPECIAL_MATCHES_FAKE_NEWS, playerCount)
 }
 
 function checkBlocked (currentPlayer, playedTiles, maxTiles){
@@ -99,7 +48,8 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
     return false
   }
   if (currentPlayer) {
-    let blockedForTurns = Math.ceil(maxTiles * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+    let blockedForTurns = Math.floor(maxTiles * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
+    console.log("Player blocked for", blockedForTurns);
     if(playedTiles === blockedForTurns + 1) {
       return false;
     } else {
@@ -109,7 +59,6 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
 }
 
 function addJdenticon(player) {
-  console.log(player.name);
   const html = `<div class='player-jdenticon'>
                   ${createJdenticon(player.name, 40)}
                 </div>`
@@ -123,7 +72,7 @@ function updateBlockedWaitTime(currentPlayer, blockedForTurns) {
     let message = blockedData.message
     $('.block-play .blocked-image').attr('src', `images/blocked_play/${currentPlayer.role}.png`)
     $('.block-play .blocked-message-container .blocked-message').html(message)
-    $('.block-play .blocked-wait-time').html(blockedForTurns + 2 - currentPlayer.queue.length)
+    $('.block-play .blocked-wait-time').html(blockedForTurns + 1 - currentPlayer.queue.length)
   }
 }
 
@@ -217,10 +166,12 @@ function initListeners(channel, board, currentPlayer) {
   })
 
   channel.on("fake-news-published", payload => {
+    console.log("EVENT RECIEVED");
     respondBoardTypeEvent(payload)
   })
 
   channel.on("real-news-published", payload => {
+    console.log("EVENT RECIEVED");
     respondBoardTypeEvent(payload)
   })
 
@@ -325,7 +276,8 @@ export function initPlayer(gameChannel, boardChannel) {
   renderPlayerTiles(currentPlayer, board);
   currentPlayer.queue = []
   initListeners(boardChannel, board, currentPlayer)
-  showRoleIntro(currentPlayer, board.connectedPlayersCount)
+  console.log($('#connected-players-count'));
+  showRoleIntro(currentPlayer, $('#connected-players-count').data('count'))
   gameChannel.on("board:changed", payload => {
     const token = getParameterByName("token")
     window.location.replace(`/${payload.board_slug}?token=${token}&player_id=${currentPlayer.id}`)

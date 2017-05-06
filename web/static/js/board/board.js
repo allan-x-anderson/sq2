@@ -1,12 +1,11 @@
-import {Presence} from "phoenix"
-import {checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe} from "./tile_matching"
+import { Presence } from "phoenix"
+import { MATCH_ANIMATION_TIME } from './board_constants'
+import { checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe } from "./tile_matching"
 import { alreadyMatched } from "./tile_matching"
 import { checkBoardTypeEvents } from "./board_type_events_emissions"
 import boardRenderer from "./board_rendering"
 import moment from 'moment'
 
-// FIXME This is duplicated, look into how to manage constants in js
-const MATCH_ANIMATION_TIME = 300;
 
 function stripIncomingState (tiles) {
   return _.map(tiles, t => {

@@ -43,7 +43,6 @@ defmodule Sq2.BoardController do
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
-      |> Poison.encode!
     render conn, "play.html", board: board_from_repo(board), player: player_from_repo(player), current_presences: current_presences
   end
 
