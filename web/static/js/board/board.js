@@ -80,15 +80,46 @@ function initListeners(channel, board) {
   })
 
   channel.on("tile-pressed", payload => {
-    console.log("Tile pressed board", payload);
     let tile = payload.tile
     board.total_played_tiles++
     checkBoardTypeEvents(board, channel)
 
-    //TODO attach the player to the tile when they press it.
     tile.player = payload.player
     tile.press_duration = moment(tile.pressed_end).diff(moment(tile.pressed_start))
 
+    if(board.type === 'democracy') {
+      tile.state = 'vote'
+      board.votes.push(tile)
+      let votePercentages = _.map(['red', 'blue', 'yellow', 'green'], color => {
+        let tilesOfColor = _.filter(board.votes, (t) => { return t.color === color }).length
+        let percentageOfTotal = tilesOfColor / board.connectedPlayersCount * 100
+        return {color: color, percentage_of_votes: percentageOfTotal}
+      })
+      let voteBarEls = _.map(votePercentages, (item) => {
+        return `<div class="vote-percentage vote-percentage-${item.color}" style="width: ${item.percentage_of_votes}%"></div>`
+      })
+      // TODO update the css only so it can transition.
+      console.log($('#votes .votes-bar'));
+      $('#votes .votes-bar').html(voteBarEls)
+      console.log(votePercentages);
+      if(board.votes.length == board.connectedPlayersCount){
+        let max = _.max(votePercentages, (v)=> {return v.percentage_of_votes})
+        let isTied = _.filter(votePercentages, (v) => {
+          console.log(v.percentage_of_votes, max.percentage_of_votes);
+          return v.percentage_of_votes === max.percentage_of_votes}).length > 1
+        if(isTied){
+          console.log("WAS A TIE");
+          board.votes = []
+          return false
+        } else {
+          tile.color = max.color
+          delete tile.player
+          board.votes = []
+        }
+      } else {
+        return false
+      }
+    }
     board.tiles = updateBoardTiles(tile, board.tiles, board.connectedPlayersCount)
     let matchTiles = _.reject(board.tiles, t => t.state == "outgoing")
     let foundMatch = checkMatch(matchTiles, board.connectedPlayersCount, board)
@@ -163,6 +194,7 @@ export function initBoard(gameChannel, boardChannel) {
     connectedPlayers: initialPresences,
     connectedPlayersCount: Object.keys(initialPresences).length,
     tiles: [],
+    votes: [],
     total_played_tiles: 0,
     matches: {},
     roles: $('#board').data('board').board.roles,

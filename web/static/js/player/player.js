@@ -33,7 +33,7 @@ function showRoleIntro(player, playerCount){
     $el.find('.j-filled-content').html(roleIntroData.html)
     let roleIntroImage = $(`<img src='/images/role_intros/${roleIntroData.img}' />`)
     $el.find('.j-filled-content .role-intro-image').html(roleIntroImage)
-    $el.find('.j-filled-content p').last().append($(`<div class='j-ascii-tiles ascii-fake-news'></div>`))
+    $el.find('.j-filled-content .breibarter-colors').append($(`<div class='j-ascii-tiles ascii-fake-news'></div>`))
     $el.find('.j-button-close').on('click', ()=> {
       $el.addClass('hide')
       $el.find('.j-button-close').off('click')
@@ -49,7 +49,7 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
   if (currentPlayer) {
     let blockedForTurns = Math.floor(maxTiles * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
     console.log("Player blocked for", blockedForTurns);
-    if(playedTiles === blockedForTurns + 1) {
+    if(playedTiles === blockedForTurns) {
       return false;
     } else {
       return true
@@ -71,7 +71,7 @@ function updateBlockedWaitTime(currentPlayer, blockedForTurns) {
     let message = blockedData.message
     $('.block-play .blocked-image').attr('src', `images/blocked_play/${currentPlayer.role}.png`)
     $('.block-play .blocked-message-container .blocked-message').html(message)
-    $('.block-play .blocked-wait-time').html(blockedForTurns + 1 - currentPlayer.queue.length)
+    $('.block-play .blocked-wait-time').html(blockedForTurns - currentPlayer.queue.length)
   }
 }
 
@@ -229,7 +229,7 @@ function initListeners(channel, board, currentPlayer) {
       //reset queue because they must have been able to play
       currentPlayer.queue = []
       currentPlayer.queue.push(payload)
-      if(board.type === "inequality") {
+      if(board.type === "inequality" || board.type === "democracy") {
         if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
           block(currentPlayer, board.connectedPlayersCount);
         }

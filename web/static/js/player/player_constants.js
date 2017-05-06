@@ -2,6 +2,14 @@ export const BLOCKED_DATA = {
   'citizen': {
     tiles_whitelist: ['blue', 'red', 'yellow', 'green']
   },
+  'citizen-blue': {
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green'],
+    percentage_of_turns: 1,
+  },
+  'citizen-red': {
+    tiles_whitelist: ['blue', 'red', 'yellow', 'green'],
+    percentage_of_turns: 1,
+  },
   'poor': {
     percentage_of_turns: 1,
     message: 'You go to work',
@@ -35,6 +43,9 @@ export const BOARD_TYPE_DATA = {
   "fake_news": {
     tile_ids: ['blue', 'red', 'yellow', 'green']
   },
+  "democracy": {
+    tile_ids: ['blue', 'red', 'yellow', 'green']
+  }
 }
 
 export const ROLE_INTRO_DATA = {
@@ -44,8 +55,30 @@ export const ROLE_INTRO_DATA = {
            <p><strong>Shhhh!</strong></p>
            <p>You are the publisher of BlahBart, if you convince people to
            match the colours below you will get a special tile next round...
+           <span class='breibarter-colors'></span>
+           </p>`
+  },
+  "citizen-blue": {
+    img: 'citizen-blue.png',
+    html: `<div class='role-intro-image'></div>
+           <p><strong>Shhhh!</strong></p>
+           <p>Your views align with
+           <span class='ascii-tiles'><span class='ascii-tile ascii-tile-blue'>&#9632;</span></span>
+           , if there are more matches containing red
+           than blue this round, you will get a special tile next round...
            </p>
-           <div class='breibarter-colors'></div>`
+           `
+  },
+  "citizen-red": {
+    img: 'citizen-red.png',
+    html: `<div class='role-intro-image'></div>
+           <p><strong>Shhhh!</strong></p>
+           <p>Your views align with
+           <span class='ascii-tiles'><span class='ascii-tile ascii-tile-red'>&#9632;</span></span>
+            if there are more matches containing red
+           than blue this round, you will get a special tile next round...
+           </p>
+           `
   },
 }
 

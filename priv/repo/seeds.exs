@@ -19,12 +19,12 @@ game = %Sq2.Game{name: "planpolitik", slug: Sq2.Game.slugified_name(%{"name"=> "
 game = Sq2.Repo.insert!(game)
 IO.inspect game
 
-board_1 = %Sq2.Board{game_id: game.id, name: "The Beginning", type: "anarchy", is_active: true, slug: Sq2.SeedsHelper.get_slug("The Beginning")}
+board_1 = %Sq2.Board{game_id: game.id, name: "Chapter 1", type: "anarchy", is_active: true, slug: Sq2.SeedsHelper.get_slug("Chapter 1")}
 board_1 = Sq2.Repo.insert!(board_1)
 board_1_role_1 = %Sq2.Role{board_id: board_1.id, name: "citizen", percentage_of_players: 100}
 Sq2.Repo.insert!(board_1_role_1)
 
-board_2 = %Sq2.Board{game_id: game.id, name: "The Awakening", type: "inequality", slug: Sq2.SeedsHelper.get_slug("The Awakening")}
+board_2 = %Sq2.Board{game_id: game.id, name: "Chapter 2", type: "inequality", slug: Sq2.SeedsHelper.get_slug("Chapter 2")}
 board_2 = Sq2.Repo.insert!(board_2)
 board_2_role_1 = %Sq2.Role{board_id: board_2.id, name: "rich", percentage_of_players: 15}
 board_2_role_2 = %Sq2.Role{board_id: board_2.id, name: "poor", percentage_of_players: 25}
@@ -33,7 +33,7 @@ Sq2.Repo.insert!(board_2_role_1)
 Sq2.Repo.insert!(board_2_role_2)
 Sq2.Repo.insert!(board_2_role_3)
 
-board_3 = %Sq2.Board{game_id: game.id, name: "The Informing", type: "fake_news",  slug: Sq2.SeedsHelper.get_slug("The Informing")}
+board_3 = %Sq2.Board{game_id: game.id, name: "Chapter 3", type: "fake_news",  slug: Sq2.SeedsHelper.get_slug("Chapter 3")}
 board_3 = Sq2.Repo.insert!(board_3)
 board_3_role_1 = %Sq2.Role{board_id: board_3.id, name: "citizen", percentage_of_players: 60}
 board_3_role_2 = %Sq2.Role{board_id: board_3.id, name: "breibarter", percentage_of_players: 10}
@@ -41,3 +41,10 @@ board_3_role_3 = %Sq2.Role{board_id: board_3.id, name: "researcher", percentage_
 Sq2.Repo.insert!(board_3_role_1)
 Sq2.Repo.insert!(board_3_role_2)
 Sq2.Repo.insert!(board_3_role_3)
+
+board_4 = %Sq2.Board{game_id: game.id, name: "Chapter 4", type: "democracy",  slug: Sq2.SeedsHelper.get_slug("Chapter 4")}
+board_4 = Sq2.Repo.insert!(board_4)
+board_4_role_1 = %Sq2.Role{board_id: board_4.id, name: "citizen-red", percentage_of_players: 50}
+board_4_role_2 = %Sq2.Role{board_id: board_4.id, name: "citizen-blue", percentage_of_players: 50}
+Sq2.Repo.insert!(board_4_role_1)
+Sq2.Repo.insert!(board_4_role_2)

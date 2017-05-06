@@ -20,6 +20,11 @@
     <section id="match-hero" class="hide">
 
     </section>
+    <section id="votes">
+      <div class="votes-bar">
+
+      </div>
+    </section>
   </section>
   <section class="display-right">
     <section id="points">

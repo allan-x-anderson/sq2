@@ -115,3 +115,30 @@ $board-height: 120px;
     font-weight: bold;
   }
 }
+
+$votes-bar-height: 2em;
+#votes {
+  width: 100%;
+  .votes-bar {
+    width: 100%;
+    height: $votes-bar-height;
+    background: $ta-blue-dark;
+  }
+  .vote-percentage {
+    height: $votes-bar-height;
+    float: left;
+    display: block;
+    &.vote-percentage-blue {
+      background: $tile-blue;
+    }
+    &.vote-percentage-red {
+      background: $tile-red;
+    }
+    &.vote-percentage-yellow {
+      background: $tile-yellow;
+    }
+    &.vote-percentage-green {
+      background: $tile-green;
+    }
+  }
+}

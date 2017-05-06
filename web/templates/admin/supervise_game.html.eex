@@ -12,7 +12,8 @@
     </p>
     <p>
       <%= if board.is_active do %>
-        <a href="/admin/boards/<%= board.id %>/trim_disconnected_players">Trim disconnected users</a>
+        <a class="button" href="/boards/<%= board.slug %>" target="_blank">Open projector</a>
+        <a class="button" href="/admin/boards/<%= board.id %>/trim_disconnected_players">Trim disconnected users</a>
       <% end %>
     </p>
     <ul>
