@@ -28,16 +28,18 @@ function generateAsciiTiles(tileColorsArray) {
 
 export function fillAsciiTilesDivs(startPattern, playersCount){
   let $el = $('.j-ascii-tiles')
-  if( $el.hasClass('ascii-fake-news') ) {
-    startPattern = HEADLINES_SPECIAL_MATCHES_FAKE_NEWS
-  } else if ( $el.hasClass('ascii-real-news') ){
-    startPattern = HEADLINES_SPECIAL_MATCHES_REAL_NEWS
-  } else {
-    console.error('TMP should have class', $el)
+  if($el.length > 0){
+    if( $el.hasClass('ascii-fake-news') ) {
+      startPattern = HEADLINES_SPECIAL_MATCHES_FAKE_NEWS
+    } else if ( $el.hasClass('ascii-real-news') ){
+      startPattern = HEADLINES_SPECIAL_MATCHES_REAL_NEWS
+    } else {
+      console.error('TMP should have class', $el)
+    }
+    let asciiTilesArray = repeatPatternUntil(startPattern, playersCount)
+    let asciiTilesHtml = generateAsciiTiles(asciiTilesArray).join('')
+    $('.j-ascii-tiles').html($(asciiTilesHtml))
   }
-  let asciiTilesArray = repeatPatternUntil(startPattern, playersCount)
-  let asciiTilesHtml = generateAsciiTiles(asciiTilesArray).join('')
-  $('.j-ascii-tiles').html($(asciiTilesHtml))
 }
 
 function generateResearch(researchClicksCount, resultShowsAfter, resultText){

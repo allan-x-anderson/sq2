@@ -39,7 +39,6 @@ function showRoleIntro(player, playerCount){
       $el.find('.j-button-close').off('click')
       $(window).scrollTop();
     })
-    fillAsciiTilesDivs(undefined, playerCount)
   }
 }
 
@@ -157,12 +156,14 @@ function initListeners(channel, board, currentPlayer) {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderPresence(board.connectedPlayers)
+    fillAsciiTilesDivs(undefined, board.connectedPlayersCount)
   })
 
   channel.on("presence_diff", diff => {
     board.connectedPlayers = Presence.syncDiff(board.connectedPlayers, diff)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderPresence(board.connectedPlayers)
+    fillAsciiTilesDivs(undefined, board.connectedPlayersCount)
   })
 
   channel.on("fake-news-published", payload => {
