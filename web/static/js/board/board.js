@@ -103,7 +103,8 @@ function initListeners(channel, board) {
       $('#votes .votes-bar').html(voteBarEls)
       console.log(votePercentages);
       if(board.votes.length == board.connectedPlayersCount){
-        let max = _.max(votePercentages, (v)=> {return v.percentage_of_votes})
+        let max = _.maxBy(votePercentages, 'percentage_of_votes')
+        console.log(max);
         let isTied = _.filter(votePercentages, (v) => {
           console.log(v.percentage_of_votes, max.percentage_of_votes);
           return v.percentage_of_votes === max.percentage_of_votes}).length > 1
@@ -113,7 +114,7 @@ function initListeners(channel, board) {
           return false
         } else {
           tile.color = max.color
-          delete tile.player
+          tile.player = {name: "Democratic vote"}
           board.votes = []
         }
       } else {
