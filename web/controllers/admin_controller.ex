@@ -16,17 +16,31 @@ defmodule Sq2.AdminController do
       where: game.id == ^id,
       left_join: players in assoc(game, :players),
       left_join: boards in assoc(game, :boards),
+      left_join: board_players in assoc(boards, :players),
       left_join: roles in assoc(boards, :roles),
-      preload: [boards: {boards, roles: roles}, players: players]
-    online_players =
-      game.boards
-      |> Enum.reduce(Map.new(), fn(board, acc)->
-        board_topic = "board:" <> Integer.to_string(board.id)
-        acc = Map.put(acc, board.id, Sq2.Presence.list(board_topic))
-      end)
+      preload: [boards: {boards, roles: roles, players: board_players}, players: players]
 
     game_json = Poison.encode! game
     render conn, "supervise_game.html", game: game
+  end
+
+  def trim_disconnected_players(conn, %{"board_id" => board_id}) do
+    # board = Repo.get(Board, params["board_id"]) |> preload([:players])
+    board = Repo.one from board in Board,
+      where: board.id == ^board_id,
+      left_join: players in assoc(board, :players),
+      preload: [players: players]
+
+    board_topic = "board:" <> Integer.to_string(board.id)
+    current_presences =
+      Sq2.Presence.list(board_topic)
+    IO.puts "MNANANANSDFNSADFSDFA"
+    connected_ids = Map.keys(current_presences) |> Enum.map(&(String.to_integer &1))
+    player_ids = Enum.map(board.players, fn(p)-> p.id end)
+    to_remove = player_ids -- connected_ids
+
+    from(p in Player, where: p.id in ^to_remove) |> Repo.delete_all
+    redirect conn, to: "/admin/supervise_game/#{board.game_id}"
   end
 
   def board_params_from_repo(board) do

@@ -84,7 +84,6 @@ function initListeners(channel, board) {
     console.log("Tile pressed board", payload);
     let tile = payload.tile
     board.total_played_tiles++
-    console.log(board.total_played_tiles)
     checkBoardTypeEvents(board, channel)
 
     //TODO attach the player to the tile when they press it.
@@ -171,7 +170,7 @@ export function initBoard(gameChannel, boardChannel) {
     type: $('#board').data('board').board.type,
     points: 0
   }
-  
+
   boardRenderer.updateTileSize(board.connectedPlayersCount)
   boardRenderer.renderTotalPoints(board.points)
   initListeners(boardChannel, board)

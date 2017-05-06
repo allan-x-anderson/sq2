@@ -4,7 +4,7 @@ function renderConnectedPlayersCount(boardId, count){
   $('#board_'+boardId).find('.connected-players-count').text(count)
 }
 
-function initListeners(channel, board) {
+function initBoardListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
@@ -16,6 +16,12 @@ function initListeners(channel, board) {
     board.connectedPlayersCount = Object.keys(board.connectedPlayers).length
     renderConnectedPlayersCount(board.id, board.connectedPlayersCount)
   })
+
+  channel.on("admin:player-joined", payload => {
+    // const $el = $(`#board_${payload.player.board_id} .total-players-count`)
+    // $el.html(parseInt($el.html()) + 1)
+    window.location.reload()
+  })
 }
 
 export function initAdmin(gameChannel, boardChannels) {
@@ -25,6 +31,6 @@ export function initAdmin(gameChannel, boardChannels) {
     boards[idx].id = parseInt($($('#admin .board').get(idx)).attr('id').split("_")[1])
     boards[idx].connectedPlayers = {}
     boards[idx].connectedPlayersCount = 0
-    initListeners(channel, boards[idx])
+    initBoardListeners(channel, boards[idx])
   })
 }

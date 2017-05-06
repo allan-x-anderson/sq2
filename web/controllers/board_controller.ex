@@ -29,42 +29,9 @@ defmodule Sq2.BoardController do
     render conn, "display.html", board: board_from_repo(board), current_presences: current_presences
   end
 
-  def join(conn, params) do
-    #if conn.current_user
-    case conn.method do
-      "POST" ->
-        %{ "board"=> board_params } = params
-        %{ "player"=> player_params } = params
-        board = Repo.get_by!(Board, slug: board_params["slug"])
-                |> Sq2.Repo.preload([:roles, :players])
-
-        params_with_role = RoleAssigner.add_role_to_params(board.roles, board.players, params["player"])
-        params_with_board_and_role = Map.merge(params_with_role, %{"board_id" => board.id})
-        params_with_game_board_and_role = Map.merge(params_with_board_and_role, %{"game_id" => board.game_id})
-
-        player_changeset = Player.changeset(%Player{}, params_with_board_and_role)
-        case Repo.insert(player_changeset) do
-          {:ok, player} ->
-            #DO CREATE Current player on conn
-            token = Phoenix.Token.sign(Sq2.Endpoint, "player", player.id)
-            conn
-            |> put_status(:created)
-            redirect conn, to: "/#{board.slug}?token=#{token}&board_id=#{player.board_id}&player_id=#{player.id}"
-          {:error, changeset} ->
-            conn
-            |> put_status(:unprocessable_entity)
-            #|> render(Sq2.ChangesetView, "error.json", changeset: changeset)
-            render conn, "join.html"
-        end
-      _ -> render conn, "join.html"
-    end
-    # If the board_slug exists as a board then create a user, assign to that board
-    # and redirect to the board_slug
-  end
-
   def player_from_repo(player) do
     %{ "player" =>
-      %{ "name" => player.name, "id" => player.id, "role" => player.role.name}
+      %{ "id" => player.id, "board_id" => player.board_id, "name" => player.name, "role" => player.role.name}
     }
   end
 

@@ -37,7 +37,6 @@ defmodule Sq2.UserSocket do
       {:ok, player_id} ->
         player = Sq2.Repo.get!(Sq2.Player, player_id)
                  |> Sq2.Repo.preload([:role, :board])
-        IO.inspect(player)
         socket = assign(socket, :player, player)
         {:ok, socket}
       {:error, _} ->

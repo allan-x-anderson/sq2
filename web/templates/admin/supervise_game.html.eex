@@ -1,23 +1,28 @@
 <div id="admin" data-game-id="<%= @game.id %>">
   <%= @game.name %> | <%= @game.slug %>
-    <%= for board <- @game.boards do %>
-    <div id="board_<%= board.id %>" class="board">
-      <h2><%= board.name %> | <%= board.slug %> Active: <%= board.is_active %></h2>
-      <p>
-        <a href="/admin/games/<%= @game.id %>/set_active_board/<%= board.id %>">SET ACTIVE</a>
-      </p>
-      <% board_id = board.id %>
-      <p>
-        currently_connected_players: <span class='connected-players-count'>0</span>
-      </p>
-      <ul>
-        <%= for role <- board.roles do %>
-          <li>
-            <strong><%= role.name %>:</strong>
-            <%= length Enum.filter(@game.players, fn(p)-> p.role_id == role.id end) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-    <% end %>
+  <%= for board <- @game.boards do %>
+  <div id="board_<%= board.id %>" class="board">
+    <h2><%= board.name %> | <%= board.slug %> Active: <%= board.is_active %></h2>
+    <p>
+      <a href="/admin/games/<%= @game.id %>/set_active_board/<%= board.id %>">SET ACTIVE</a>
+    </p>
+    <p>
+      Connected players: <span class='connected-players-count'>0</span>
+      Total players: <span class='total-players-count'><%= length board.players %></span>
+    </p>
+    <p>
+      <%= if board.is_active do %>
+        <a href="/admin/boards/<%= board.id %>/trim_disconnected_players">Trim disconnected users</a>
+      <% end %>
+    </p>
+    <ul>
+      <%= for role <- board.roles do %>
+      <li>
+        <strong><%= role.name %>:</strong>
+        <%= length Enum.filter(@game.players, fn(p)-> p.role_id == role.id end) %>
+      </li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
 </div>

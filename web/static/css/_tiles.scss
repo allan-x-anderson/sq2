@@ -188,10 +188,10 @@ $tile-green: #7BDE7A;
 }
 .j-ascii-tiles {
   display: inline-block;
+  vertical-align: bottom;
 }
 .ascii-tile {
   display: inline-block;
-  font-size: 2em;
   &.ascii-tile-blue {
     color: $tile-blue;
   }

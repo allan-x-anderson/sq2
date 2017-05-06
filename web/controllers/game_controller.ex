@@ -3,6 +3,12 @@ defmodule Sq2.GameController do
 
   alias Sq2.{Repo, Game, Board, Player, RoleAssigner}
 
+  def player_from_repo(player) do
+    %{ "player" =>
+      %{ "id" => player.id, "board_id" => player.board_id, "name" => player.name}
+    }
+  end
+
   def join(conn, params) do
     #if conn.current_user
     case conn.method do
@@ -28,6 +34,8 @@ defmodule Sq2.GameController do
         case Repo.insert(player_changeset) do
           {:ok, player} ->
             token = Phoenix.Token.sign(Sq2.Endpoint, "player", player.id)
+            IO.inspect player_from_repo(player)
+            Sq2.Endpoint.broadcast! "board:" <> Integer.to_string(player.board_id), "admin:player-joined", player_from_repo(player)
             conn
             |> put_status(:created)
             redirect conn, to: "/#{current_board.slug}?token=#{token}&board_id=#{player.board_id}&player_id=#{player.id}"

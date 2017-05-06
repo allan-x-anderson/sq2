@@ -47,7 +47,9 @@ const BOARD_TYPE_DATA = {
 
 const ROLE_INTRO_DATA = {
   "breibarter": {
-    html: `<p><strong>Shhhh!</strong></p>
+    img: 'breibarter.jpg',
+    html: `<div class='role-intro-image'></div>
+           <p><strong>Shhhh!</strong></p>
            <p>You are the publisher of BlahBart, if you convince people to
            match the colours below you will get a special tile next round...
            </p>
@@ -73,19 +75,22 @@ let pressEndEvent = deviceHasTouchEvents() ? 'touchend' : 'mouseup'
 
 
 function showRoleIntro(player, playerCount){
-  const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red red'
+  const HEADLINES_SPECIAL_MATCHES_FAKE_NEWS = 'green blue red'
   let roleIntroData = ROLE_INTRO_DATA[player.role]
   if (roleIntroData) {
     let $el = $('.modal-role-intro')
     $el.removeClass('hide')
     $el.find('.j-filled-content').html(roleIntroData.html)
-    $el.find('.j-filled-content').append($(`<div class='j-ascii-tiles'></div>`))
+    let roleIntroImage = $(`<img src='/images/role_intros/${roleIntroData.img}' />`)
+    $el.find('.j-filled-content .role-intro-image').html(roleIntroImage)
+    $el.find('.j-filled-content p').last().append($(`<div class='j-ascii-tiles'></div>`))
     $el.find('.j-button-close').on('click', ()=> {
       $el.addClass('hide')
       $el.find('.j-button-close').off('click')
       $(window).scrollTop();
     })
   }
+  console.log(playerCount);
   fillAsciiTilesDivs(HEADLINES_SPECIAL_MATCHES_FAKE_NEWS, playerCount)
 }
 

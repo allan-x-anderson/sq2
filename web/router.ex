@@ -26,7 +26,9 @@ defmodule Sq2.Router do
     get "/admin/supervise_game/:game_id", AdminController, :supervise_game
     get "/join", GameController, :join
     post "/join", GameController, :join
+    #TODO shouldn't be GET
     get "/admin/games/:game_id/set_active_board/:board_id", AdminController, :set_active_board
+    get "/admin/boards/:board_id/trim_disconnected_players", AdminController, :trim_disconnected_players
     #must be last
     get "/:board_slug", BoardController, :play
   end
