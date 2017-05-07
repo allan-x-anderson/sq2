@@ -6,6 +6,8 @@
   background: $tile-blue;
   color: #fff;
   margin-right: 1em;
+  text-decoration: none;
+  box-shadow: 2px 2px 0 $ta-camo-green;
   &:hover {
     cursor: pointer;
     background: darken($tile-blue, 5%);

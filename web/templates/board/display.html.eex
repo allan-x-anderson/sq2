@@ -22,7 +22,15 @@
     </section>
     <section id="votes">
       <div class="votes-bar">
-
+        <div class="vote-percentage vote-percentage-blue"></div>
+        <div class="vote-percentage vote-percentage-red"></div>
+        <div class="vote-percentage vote-percentage-yellow"></div>
+        <div class="vote-percentage vote-percentage-green"></div>
+      </div>
+      <div class="votes-bar-result">
+        <p>
+          Voting in progress...
+        </p>
       </div>
     </section>
   </section>

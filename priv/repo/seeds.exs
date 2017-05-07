@@ -44,7 +44,9 @@ Sq2.Repo.insert!(board_3_role_3)
 
 board_4 = %Sq2.Board{game_id: game.id, name: "Chapter 4", type: "democracy",  slug: Sq2.SeedsHelper.get_slug("Chapter 4")}
 board_4 = Sq2.Repo.insert!(board_4)
-board_4_role_1 = %Sq2.Role{board_id: board_4.id, name: "citizen-red", percentage_of_players: 50}
-board_4_role_2 = %Sq2.Role{board_id: board_4.id, name: "citizen-blue", percentage_of_players: 50}
+board_4_role_1 = %Sq2.Role{board_id: board_4.id, name: "citizen-red", percentage_of_players: 40}
+board_4_role_2 = %Sq2.Role{board_id: board_4.id, name: "citizen-blue", percentage_of_players: 40}
+board_4_role_3 = %Sq2.Role{board_id: board_4.id, name: "citizen-green", percentage_of_players: 20}
 Sq2.Repo.insert!(board_4_role_1)
 Sq2.Repo.insert!(board_4_role_2)
+Sq2.Repo.insert!(board_4_role_3)

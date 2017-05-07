@@ -3,6 +3,7 @@ import { MATCH_ANIMATION_TIME } from './board_constants'
 import { checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe } from "./tile_matching"
 import { alreadyMatched } from "./tile_matching"
 import { checkBoardTypeEvents } from "./board_type_events_emissions"
+import { percentageOfVotesPerTile, setVoteBarWidths, voteResults, renderResult } from "./board_types/democracy"
 import boardRenderer from "./board_rendering"
 import moment from 'moment'
 
@@ -62,6 +63,11 @@ function trimTiles (board) {
   }
 }
 
+function unblockPlayers (channel) {
+  console.log("PUSHING EVENT");
+  channel.push('voting:round-finished', {})
+}
+
 function initListeners(channel, board) {
   channel.on("presence_state", state => {
     board.connectedPlayers = Presence.syncState(board.connectedPlayers, state)
@@ -88,39 +94,28 @@ function initListeners(channel, board) {
     tile.press_duration = moment(tile.pressed_end).diff(moment(tile.pressed_start))
 
     if(board.type === 'democracy') {
-      tile.state = 'vote'
       board.votes.push(tile)
-      let votePercentages = _.map(['red', 'blue', 'yellow', 'green'], color => {
-        let tilesOfColor = _.filter(board.votes, (t) => { return t.color === color }).length
-        let percentageOfTotal = tilesOfColor / board.connectedPlayersCount * 100
-        return {color: color, percentage_of_votes: percentageOfTotal}
-      })
-      let voteBarEls = _.map(votePercentages, (item) => {
-        return `<div class="vote-percentage vote-percentage-${item.color}" style="width: ${item.percentage_of_votes}%"></div>`
-      })
-      // TODO update the css only so it can transition.
-      console.log($('#votes .votes-bar'));
-      $('#votes .votes-bar').html(voteBarEls)
-      console.log(votePercentages);
+      const tileColors = ['red', 'blue', 'yellow', 'green'];
+
+      let votePercentages = percentageOfVotesPerTile(tileColors, board.votes, board.connectedPlayersCount)
+      setVoteBarWidths(votePercentages)
       if(board.votes.length == board.connectedPlayersCount){
-        let max = _.maxBy(votePercentages, 'percentage_of_votes')
-        console.log(max);
-        let isTied = _.filter(votePercentages, (v) => {
-          console.log(v.percentage_of_votes, max.percentage_of_votes);
-          return v.percentage_of_votes === max.percentage_of_votes}).length > 1
-        if(isTied){
-          console.log("WAS A TIE");
-          board.votes = []
-          return false
+        let winningTile = voteResults(votePercentages, board)
+        console.log("WINNER WINNER", winningTile);
+        if(winningTile){
+          renderResult(winningTile, votePercentages, tileColors)
+          unblockPlayers(channel)
+          tile = winningTile
         } else {
-          tile.color = max.color
-          tile.player = {name: "Democratic vote"}
-          board.votes = []
+          renderResult(winningTile, votePercentages, tileColors)
+          unblockPlayers(channel)
+          return false
         }
       } else {
         return false
       }
     }
+
     board.tiles = updateBoardTiles(tile, board.tiles, board.connectedPlayersCount)
     let matchTiles = _.reject(board.tiles, t => t.state == "outgoing")
     let foundMatch = checkMatch(matchTiles, board.connectedPlayersCount, board)

@@ -41,8 +41,13 @@ defmodule Sq2.BoardChannel do
   end
 
   def handle_in("admin:player-joined", %{"player" => player}, socket) do
-    IO.puts "HANDLE IN \r\n"
     broadcast! socket, "admin:player-joined", %{"player" => player}
+    {:noreply, socket}
+  end
+
+  def handle_in("voting:round-finished", _, socket) do
+    IO.puts "HANDLE IN \r\n"
+    broadcast! socket, "voting:round-finished", %{}
     {:noreply, socket}
   end
 
@@ -62,9 +67,12 @@ defmodule Sq2.BoardChannel do
   end
 
   def handle_out("admin:player-joined", payload, socket) do
-    IO.puts "HANDLE OUT \r\n"
-    IO.inspect payload
     push socket, "admin:player-joined", payload
+    {:noreply, socket}
+  end
+
+  def handle_out("voting:round-finished", _, socket) do
+    push socket, "admin:player-joined", %{}
     {:noreply, socket}
   end
 

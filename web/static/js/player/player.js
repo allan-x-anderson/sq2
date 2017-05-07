@@ -48,7 +48,6 @@ function checkBlocked (currentPlayer, playedTiles, maxTiles){
   }
   if (currentPlayer) {
     let blockedForTurns = Math.floor(maxTiles * BLOCKED_DATA[currentPlayer.role].percentage_of_turns)
-    console.log("Player blocked for", blockedForTurns);
     if(playedTiles === blockedForTurns) {
       return false;
     } else {
@@ -172,8 +171,13 @@ function initListeners(channel, board, currentPlayer) {
   })
 
   channel.on("real-news-published", payload => {
-    console.log("EVENT RECIEVED");
     respondBoardTypeEvent(payload)
+  })
+
+  channel.on('voting:round-finished', payload => {
+    console.log("EVENT RECIEVED");
+    currentPlayer.queue = []
+    unblock(currentPlayer, board.connectedPlayersCount)
   })
 
   channel.on("tile-pressed", payload => {

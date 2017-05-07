@@ -13,6 +13,7 @@ export const ANIMATE_FOUND_MATCH_OUT_CLASS = "fadeOut";
 
 export const MATCH_ANIMATION_TIME = 300;
 export const HERO_SHOW_TIME = 2500;
+export const SHOW_VOTE_RESULT_DURATION = 1500;
 
 export const MATCH_HERO_IMAGES = {
   single_color_blue: "cute-cat",

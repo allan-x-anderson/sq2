@@ -2,20 +2,16 @@
   <%= @game.name %> | <%= @game.slug %>
   <%= for board <- @game.boards do %>
   <div id="board_<%= board.id %>" class="board">
-    <h2><%= board.name %> | <%= board.slug %> Active: <%= board.is_active %></h2>
-    <p>
-      <a href="/admin/games/<%= @game.id %>/set_active_board/<%= board.id %>">SET ACTIVE</a>
-    </p>
+    <h2><%= board.name %> | <%= board.slug %> Active: <%= board.is_active %> </h2>
     <p>
       Connected players: <span class='connected-players-count'>0</span>
       Total players: <span class='total-players-count'><%= length board.players %></span>
     </p>
-    <p>
-      <%= if board.is_active do %>
-        <a class="button" href="/boards/<%= board.slug %>" target="_blank">Open projector</a>
-        <a class="button" href="/admin/boards/<%= board.id %>/trim_disconnected_players">Trim disconnected users</a>
-      <% end %>
-    </p>
+    <a class="button" href="/admin/games/<%= @game.id %>/set_active_board/<%= board.id %>">Set Active</a>
+    <%= if board.is_active do %>
+      <a class="button" href="/boards/<%= board.slug %>" target="_blank">Open projector</a>
+      <a class="button" href="/admin/boards/<%= board.id %>/trim_disconnected_players">Trim disconnected users</a>
+    <% end %>
     <ul>
       <%= for role <- board.roles do %>
       <li>
