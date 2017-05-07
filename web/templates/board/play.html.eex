@@ -1,4 +1,4 @@
-<section id="debug" class="nohide">
+<section id="debug" class="hide">
   <%= Poison.encode! @player %>
   <%= Poison.encode! @board %>
 </section>
@@ -14,6 +14,11 @@
 <div style="display:none" id="current-board" data-board="<%= Poison.encode! @board %>"></div>
 <section id="player-hand"></section>
 
+<div class="block-play-timer hide">
+  <div class="timer">
+
+  </div>
+</div>
 <div class="block-play hide">
   <div class="blocked-message-container">
     <img class="blocked-image" />

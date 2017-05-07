@@ -1,4 +1,7 @@
 export const BLOCKED_DATA = {
+  'player': {
+    tiles_whitelist: []
+  },
   'citizen': {
     tiles_whitelist: ['blue', 'red', 'yellow', 'green']
   },
@@ -41,6 +44,9 @@ export const BLOCKED_DATA = {
 };
 
 export const BOARD_TYPE_DATA = {
+  "lobby": {
+    tile_ids: []
+  },
   "anarchy": {
     tile_ids: ['blue', 'red', 'yellow', 'green']
   },
@@ -109,3 +115,5 @@ export const ESCALATE_STAGE_2_CLASS = 'pulse'
 export const AFTER_PRESS_ANIMATION_TIME = 200
 export const AFTER_PRESS_ANIMATION_IN_CLASS = 'zoomOut'
 export const AFTER_PRESS_ANIMATION_OUT_CLASS = 'zoomIn'
+
+export const TILE_PRESS_DEBOUNCE_DURATION = 2000

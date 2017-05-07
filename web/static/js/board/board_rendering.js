@@ -14,6 +14,8 @@ import {
   ANIMATE_FOUND_MATCH_OUT_CLASS,
   MATCH_ANIMATION_TIME,
   HERO_SHOW_TIME,
+  WELCOME_PLAYER_ANIMATION_CLASS,
+  WELCOME_PLAYER_DURATION,
   MATCH_HERO_IMAGES
 } from './board_constants'
 
@@ -26,6 +28,38 @@ function renderPresence(connectedPlayers) {
 }
 
 // END Dev util
+
+let _welcomedPlayers = []
+function welcomePlayers(connectedPlayers, joiningPlayers){
+  _.each(Object.keys(joiningPlayers), (key)=> {
+    if(!_.includes(_welcomedPlayers, key)) {
+      let playerName = joiningPlayers[key].metas[0].player.name
+      const $joinedContainer = $('.lobby-joined-players')
+      const $joiningContainer = $('.lobby-joining-players')
+      const jdenticonLarge = createJdenticon(playerName, 110)
+      const jdenticonSmall = createJdenticon(playerName, 40)
+      const welcomeMsg = `<h2>Welcome</h2>${jdenticonLarge}`
+      //Reset
+      clearTimeout(window.elcomePlayer)
+      $joiningContainer.removeClass(`animated ${WELCOME_PLAYER_ANIMATION_CLASS}`)
+      $joiningContainer.addClass('hide')
+      $joiningContainer.html('')
+
+      //Add
+      $joiningContainer.html(welcomeMsg)
+      $joiningContainer.removeClass('hide')
+      $joiningContainer.addClass(`animated ${WELCOME_PLAYER_ANIMATION_CLASS}`)
+      $joinedContainer.append(jdenticonSmall)
+      
+      jdenticon()
+      _welcomedPlayers.push(key)
+      window.welcomePlayer = setTimeout(()=>{
+        $joiningContainer.removeClass(`animated ${WELCOME_PLAYER_ANIMATION_CLASS}`)
+        $joiningContainer.addClass('hide')
+      }, WELCOME_PLAYER_DURATION)
+    }
+  })
+}
 
 function getTileWidth(numPlayers){
   return 100 / numPlayers + "%"
@@ -203,5 +237,6 @@ export default {
   renderTotalPoints,
   renderMatchHero,
   removeMatchHero,
-  renderPresence
+  renderPresence,
+  welcomePlayers
 }

@@ -15,6 +15,9 @@ export const MATCH_ANIMATION_TIME = 300;
 export const HERO_SHOW_TIME = 2500;
 export const SHOW_VOTE_RESULT_DURATION = 1500;
 
+export const WELCOME_PLAYER_ANIMATION_CLASS = 'bounce-in-fwd';
+export const WELCOME_PLAYER_DURATION = 15000;
+
 export const MATCH_HERO_IMAGES = {
   single_color_blue: "cute-cat",
   single_color_red: "jumping-cat",

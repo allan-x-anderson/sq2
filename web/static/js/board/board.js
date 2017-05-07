@@ -83,6 +83,9 @@ function initListeners(channel, board) {
     boardRenderer.renderPresence(board.connectedPlayers)
     boardRenderer.updateTileSize(board.connectedPlayersCount)
     trimTiles(board)
+    if(board.type == "lobby"){
+      boardRenderer.welcomePlayers(board.connectedPlayers, diff.joins)
+    }
   })
 
   channel.on("tile-pressed", payload => {

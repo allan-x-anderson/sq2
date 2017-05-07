@@ -19,7 +19,8 @@ import {
  ESCALATE_STAGE_2_CLASS,
  AFTER_PRESS_ANIMATION_TIME,
  AFTER_PRESS_ANIMATION_IN_CLASS,
- AFTER_PRESS_ANIMATION_OUT_CLASS
+ AFTER_PRESS_ANIMATION_OUT_CLASS,
+ TILE_PRESS_DEBOUNCE_DURATION
 } from './player_constants'
 
 let pressStartEvent = deviceHasTouchEvents() ? 'touchstart' : 'mousedown'
@@ -218,6 +219,9 @@ function initListeners(channel, board, currentPlayer) {
   $(document).on(pressEndEvent, function(e) {
     if(window.clicked){
       window.clearInterval(window.pressEscalationTimer)
+      window.clearInterval(window.blockPlayDebouncerAnimation)
+      window.clearInterval(window.blockPlayDebouncerAnimateOut)
+      window.clearTimeout(window.blockPlayDebouncer)
       let $el = window.clicked
       deEscalateLongPress($el)
       afterPressAnimation($el)
@@ -237,6 +241,23 @@ function initListeners(channel, board, currentPlayer) {
         if( checkBlocked(currentPlayer, currentPlayer.queue.length, board.connectedPlayersCount) ) {
           block(currentPlayer, board.connectedPlayersCount);
         }
+      } else {
+        //Standard one second blocker
+        $('.block-play-timer').removeClass('hide')
+        $('.block-play-timer').css({opacity: 0.7})
+        window.blockPlayDebouncerAnimation = setInterval(()=>{
+          let asciiTile = `<span class='ascii-tiles'><span class='ascii-tile ascii-tile-${_.sample(['blue', 'red', 'green', 'yellow'])}'>&#9632;</span></span>`
+          $('.block-play-timer .timer').append(asciiTile)
+        }, 30)
+        window.blockPlayDebouncerAnimateOut = setTimeout(()=> {
+          $('.block-play-timer').css({opacity: 0})
+        }, 1700)
+
+        window.blockPlayDebouncer = setTimeout(()=> {
+          $('.block-play-timer').addClass('hide')
+          $('.block-play-timer .timer').html('')
+          window.clearInterval(window.blockPlayDebouncerAnimation)
+        }, TILE_PRESS_DEBOUNCE_DURATION)
       }
       window.clicked = undefined
     }

@@ -17,5 +17,11 @@ import "phoenix_html"
 //
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
-
+jdenticon.config = {
+    lightness: {
+        color: [0.0, 1.0],
+        grayscale: [0.0, 1.0]
+    },
+    saturation: 0.9
+};
 import socket from "./socket"

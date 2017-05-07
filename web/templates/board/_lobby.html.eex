@@ -1,0 +1,24 @@
+<div class="lobby">
+  <div class="lobby-welcome">
+    <h1>Welcome</h1>
+    <span class='ascii-tiles'><span class='ascii-tile ascii-tile-blue'>&#9632;</span></span>
+    <span class='ascii-tiles'><span class='ascii-tile ascii-tile-red'>&#9632;</span></span>
+    <span class='ascii-tiles'><span class='ascii-tile ascii-tile-green'>&#9632;</span></span>
+    <span class='ascii-tiles'><span class='ascii-tile ascii-tile-yellow'>&#9632;</span></span>
+    <p>
+      Please sign in at: <em>teiling.instantiate.me</em>
+    </p>
+    <p>
+      The game name is: <strong><%= @game.slug %></strong>
+    </p>
+    <p>
+      Work together...
+    </p>
+  </div>
+  <div class="lobby-joined-players">
+
+  </div>
+  <div class="lobby-joining-players">
+
+  </div>
+</div>

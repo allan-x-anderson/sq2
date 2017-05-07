@@ -83,6 +83,23 @@ $tile-green: #7BDE7A;
     background-color: $tile-green;
   }
 }
+.block-play-timer {
+  position: fixed;
+  transition: all 300ms ease-in-out;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: 0.5;
+  padding: 2em;
+  font-size: 1.4em;
+  text-align: center;
+  .timer {
+    margin-top: 50px;
+    padding: 0.5em;
+  }
+}
 
 .block-play {
   position: fixed;

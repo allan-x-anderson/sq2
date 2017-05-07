@@ -4,6 +4,35 @@
   Board: <%= Poison.encode! @board %>
 </section>
 <div class='board-display'>
+  <%= if @board["board"]["type"] == "lobby" do %>
+    <section id="board" class="hide" data-board="<%= Poison.encode! @board %>" data-initial-presences="<%= @current_presences %>"></section>
+    <%= render "_lobby.html", game: @game %>
+  <% end %>
+
+  <%= if @board["board"]["type"] != "lobby" do %>
+    <section class="display-left">
+      <section id="board" data-board="<%= Poison.encode! @board %>" data-initial-presences="<%= @current_presences %>">
+        <section class="tiles">
+        </section>
+      </section>
+      <section id="match-hero" class="hide">
+
+      </section>
+      <%= if @board["board"]["type"] == "democracy" do %>
+        <%= render "_voting_bar.html" %>
+      <% end %>
+    </section>
+    <section class="display-right">
+      <section id="points">
+        <div class="total-points">
+
+        </div>
+      </section>
+      <section id="matches">
+
+      </section>
+    </section>
+  <% end %>
   <section id="game-bar">
     <div class="game-bar-left">
       <%= @board["board"]["name"] %>
@@ -11,37 +40,5 @@
     <div class="game-bar-right">
       0
     </div>
-  </section>
-  <section class="display-left">
-    <section id="board" data-board="<%= Poison.encode! @board %>" data-initial-presences="<%= @current_presences %>">
-      <section class="tiles">
-      </section>
-    </section>
-    <section id="match-hero" class="hide">
-
-    </section>
-    <section id="votes">
-      <div class="votes-bar">
-        <div class="vote-percentage vote-percentage-blue"></div>
-        <div class="vote-percentage vote-percentage-red"></div>
-        <div class="vote-percentage vote-percentage-yellow"></div>
-        <div class="vote-percentage vote-percentage-green"></div>
-      </div>
-      <div class="votes-bar-result">
-        <p>
-          Voting in progress...
-        </p>
-      </div>
-    </section>
-  </section>
-  <section class="display-right">
-    <section id="points">
-      <div class="total-points">
-
-      </div>
-    </section>
-    <section id="matches">
-
-    </section>
   </section>
 </div>

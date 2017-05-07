@@ -79,7 +79,8 @@ defmodule Sq2.BoardChannel do
   def handle_info(:after_join, socket) do
     if socket.assigns[:player] do
       Presence.track(socket, socket.assigns.player.id, %{
-        online_at: :os.system_time(:milli_seconds)
+        online_at: :os.system_time(:milli_seconds),
+        player: %{name: socket.assigns.player.name}
       })
       # IO.puts socket.assigns.player.board.slug
       # Presence.track(self(), "board_presence_" <> socket.assigns.player.board.slug, socket.assigns.player.id, %{

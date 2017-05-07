@@ -1,7 +1,7 @@
 defmodule Sq2.BoardController do
   use Sq2.Web, :controller
 
-  alias Sq2.{ Board, Player, RoleAssigner }
+  alias Sq2.{Game, Board, Player, RoleAssigner }
 
   def index(conn, _params) do
     render conn, "index.html"
@@ -22,11 +22,12 @@ defmodule Sq2.BoardController do
   def display(conn, %{"board_slug" => slug}) do
     board = Repo.get_by!(Board, slug: slug)
             |> Sq2.Repo.preload([:roles])
+    game = Repo.get_by!(Game, id: board.game_id)
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
       |> Poison.encode!
-    render conn, "display.html", board: board_from_repo(board), current_presences: current_presences
+    render conn, "display.html", game: game, board: board_from_repo(board), current_presences: current_presences
   end
 
   def player_from_repo(player) do
