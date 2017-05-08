@@ -150,7 +150,12 @@ function initListeners(channel, board) {
         boardRenderer.renderMatchHero(foundMatch)
         //removeMatchHero delayed
         boardRenderer.removeMatchHero();
-        channel.push('matches:new-match', {match: foundMatch})
+        let match = {
+          points: foundMatch.points,
+          name: foundMatch.name,
+          tiles: _.map(matchedTiles, 'color')
+        }
+        channel.push('matches:new-match', {match: match})
       }
 
       let HeroTilesOpts = {

@@ -55,13 +55,19 @@ defmodule Sq2.BoardChannel do
     board = Repo.get(Board, id)
     current_points = board.points
     new_points = board.points + match["points"]
-    changeset = Board.changeset(board, %{"name"=> board.name, "points" => new_points})
+
+    current_matches = board.matches
+    new_matches = board.matches ++ [match]
+    changeset = Board.changeset(board, %{"name"=> board.name, "points" => new_points, "matches" => new_matches})
 
     case Repo.update(changeset) do
       {:ok, board} ->
+        IO.puts "FINNNNNNNNNe"
         broadcast! socket, "matches:new-match", %{"match" => match}
         {:noreply, socket}
       {:error, changeset} ->
+        IO.puts "ERRRRRROrRRRRRRRRRRRRRRR"
+        IO.inspect changeset
         {:noreply, socket}
     end
   end

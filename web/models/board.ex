@@ -8,6 +8,7 @@ defmodule Sq2.Board do
     field :slug, :string
     field :is_active, :boolean
     field :points, :integer
+    field :matches, {:array, :map}
     belongs_to :game, Sq2.Game
     has_many :players, Sq2.Player
     has_many :roles, Sq2.Role
@@ -20,8 +21,10 @@ defmodule Sq2.Board do
   """
   def changeset(struct, params \\ %{}) do
     params = Map.merge(params, slugified_name(params))
+    IO.puts "PARAMS"
+    IO.inspect params
     struct
-    |> cast(params, [:name, :type, :game_id, :slug, :is_active, :points])
+    |> cast(params, [:name, :type, :game_id, :slug, :is_active, :points, :matches])
     |> validate_required([:name, :type, :game_id])
   end
 
