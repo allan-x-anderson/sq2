@@ -35,10 +35,15 @@
   <% end %>
   <section id="game-bar">
     <div class="game-bar-left">
-      <%= @board["board"]["name"] %>
+      <%= for board <- @game.boards do %>
+        <%= if board.slug != "lobby" do %>
+          <span class="board-name active-board-<%= board.is_active%>"><%= board.name %></span>
+        <% end %>
+      <% end %>
     </div>
-    <div class="game-bar-right">
-      0
+    <div class="game-bar-right game-bar-points" data-points="<%= Enum.sum(Enum.map(@game.boards, fn(b)-> b.points end)) %>">
+      <span>Total: </span>
+      <span class="game-bar-points-number"><%= Enum.sum(Enum.map(@game.boards, fn(b)-> b.points end)) %></span>
     </div>
   </section>
 </div>

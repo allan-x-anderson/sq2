@@ -7,6 +7,7 @@ defmodule Sq2.Repo.Migrations.CreateBoard do
       add :slug, :string
       add :type, :string
       add :is_active, :boolean, default: false
+      add :points, :integer, default: 0
       add :game_id, references(:games)
 
       timestamps()

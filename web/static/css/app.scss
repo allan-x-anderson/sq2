@@ -12,6 +12,8 @@
 html {
   box-sizing: border-box;
   height: 100%;
+  overflow: -moz-scrollbars-vertical;
+  overflow-y: scroll;
 }
 *, *:before, *:after {
   box-sizing: inherit;

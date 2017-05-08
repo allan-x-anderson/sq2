@@ -34,7 +34,6 @@ defmodule Sq2.AdminController do
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
-    IO.puts "MNANANANSDFNSADFSDFA"
     connected_ids = Map.keys(current_presences) |> Enum.map(&(String.to_integer &1))
     player_ids = Enum.map(board.players, fn(p)-> p.id end)
     to_remove = player_ids -- connected_ids

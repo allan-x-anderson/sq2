@@ -88,6 +88,13 @@ function initListeners(channel, board) {
     }
   })
 
+  channel.on('matches:new-match', ({match: match}) => {
+    const $el = $('.game-bar-points')
+    let points = $el.data('points')
+    $el.find('.game-bar-points-number').html(points + match.points)
+    $el.data('points', points + match.points)
+  })
+
   channel.on("tile-pressed", payload => {
     let tile = payload.tile
     board.total_played_tiles++
@@ -141,8 +148,9 @@ function initListeners(channel, board) {
 
       if(!alreadyMatched(board.matches, foundMatch.name)){
         boardRenderer.renderMatchHero(foundMatch)
-        //Is delayed
+        //removeMatchHero delayed
         boardRenderer.removeMatchHero();
+        channel.push('matches:new-match', {match: foundMatch})
       }
 
       let HeroTilesOpts = {
@@ -165,7 +173,8 @@ function initListeners(channel, board) {
 
       board.tiles = []
       window.setTimeout(()=> {
-        boardRenderer.renderTiles(board.tiles, board.connectedPlayersCount, '#board', true)
+        boardRenderer.renderTiles(board.tiles, board.connectedPlayersCount, '#board', {jdenticon_opts: { size: '20' } })
+
         let matchesTilesOpts = {
           container_selector: '#matches',
           tiles: matchedTiles,
@@ -179,7 +188,7 @@ function initListeners(channel, board) {
       }, MATCH_ANIMATION_TIME)
 
     } else {
-      boardRenderer.renderTiles(board.tiles, board.connectedPlayersCount, '#board', true)
+      boardRenderer.renderTiles(board.tiles, board.connectedPlayersCount, '#board', {jdenticon_opts: { size: '20' } })
     }
     // TODO not at all performant, it needs to only update on the new tile.
     jdenticon();
@@ -198,7 +207,7 @@ export function initBoard(gameChannel, boardChannel) {
     matches: {},
     roles: $('#board').data('board').board.roles,
     type: $('#board').data('board').board.type,
-    points: 0
+    points: $('#board').data('board').board.points
   }
 
   boardRenderer.updateTileSize(board.connectedPlayersCount)

@@ -1,7 +1,7 @@
 defmodule Sq2.BoardController do
   use Sq2.Web, :controller
 
-  alias Sq2.{Game, Board, Player, RoleAssigner }
+  alias Sq2.{Repo, Game, Board, Player, RoleAssigner }
 
   def index(conn, _params) do
     render conn, "index.html"
@@ -15,14 +15,14 @@ defmodule Sq2.BoardController do
 
   def board_from_repo(board) do
     %{ "board" =>
-      %{ "id" => board.id, "game_id"=> board.game_id, "name"=> board.name, "type" => board.type, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
+      %{ "id" => board.id, "game_id"=> board.game_id, "name"=> board.name, "type" => board.type, "points" => board.points, "roles" => Enum.map(board.roles, fn (role) -> role_from_repo(role) end )}
     }
   end
 
   def display(conn, %{"board_slug" => slug}) do
     board = Repo.get_by!(Board, slug: slug)
-            |> Sq2.Repo.preload([:roles])
-    game = Repo.get_by!(Game, id: board.game_id)
+            |> Repo.preload([:roles])
+    game = Repo.get_by!(Game, id: board.game_id) |> Repo.preload(boards: from(b in Board, order_by: [asc: b.inserted_at]))
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)
@@ -38,9 +38,9 @@ defmodule Sq2.BoardController do
 
   def play(conn, %{"board_slug" => slug, "player_id" => player_id} = params) do
     player = Repo.get!(Player, player_id)
-            |> Sq2.Repo.preload([:role])
+            |> Repo.preload([:role])
     board = Repo.get_by!(Board, slug: slug)
-            |> Sq2.Repo.preload([:players, :roles])
+            |> Repo.preload([:players, :roles])
     board_topic = "board:" <> Integer.to_string(board.id)
     current_presences =
       Sq2.Presence.list(board_topic)

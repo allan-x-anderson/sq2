@@ -7,6 +7,7 @@ defmodule Sq2.Board do
     field :type, :string
     field :slug, :string
     field :is_active, :boolean
+    field :points, :integer
     belongs_to :game, Sq2.Game
     has_many :players, Sq2.Player
     has_many :roles, Sq2.Role
@@ -18,12 +19,9 @@ defmodule Sq2.Board do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
-    IO.puts "**************"
-    IO.inspect params
     params = Map.merge(params, slugified_name(params))
-    IO.inspect params
     struct
-    |> cast(params, [:name, :type, :game_id, :slug, :is_active])
+    |> cast(params, [:name, :type, :game_id, :slug, :is_active, :points])
     |> validate_required([:name, :type, :game_id])
   end
 

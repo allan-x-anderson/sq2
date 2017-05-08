@@ -1,7 +1,7 @@
 defmodule Sq2.BoardChannel do
   use Phoenix.Channel
 
-  alias Sq2.{Board}
+  alias Sq2.{Repo, Board}
   alias Sq2.Presence
 
   intercept ["admin:player-joined", "tile-pressed", "fake-news-published", "real-news-published"]
@@ -46,9 +46,24 @@ defmodule Sq2.BoardChannel do
   end
 
   def handle_in("voting:round-finished", _, socket) do
-    IO.puts "HANDLE IN \r\n"
     broadcast! socket, "voting:round-finished", %{}
     {:noreply, socket}
+  end
+
+  def handle_in("matches:new-match", %{"match" => match}, socket) do
+    id = socket.assigns.board.id
+    board = Repo.get(Board, id)
+    current_points = board.points
+    new_points = board.points + match["points"]
+    changeset = Board.changeset(board, %{"name"=> board.name, "points" => new_points})
+
+    case Repo.update(changeset) do
+      {:ok, board} ->
+        broadcast! socket, "matches:new-match", %{"match" => match}
+        {:noreply, socket}
+      {:error, changeset} ->
+        {:noreply, socket}
+    end
   end
 
   def handle_out("tile-pressed", payload, socket) do
@@ -72,7 +87,12 @@ defmodule Sq2.BoardChannel do
   end
 
   def handle_out("voting:round-finished", _, socket) do
-    push socket, "admin:player-joined", %{}
+    push socket, "voting:round-finished", %{}
+    {:noreply, socket}
+  end
+
+  def handle_out("matches:new-match", payload, socket) do
+    push socket, "matches:new-match", payload
     {:noreply, socket}
   end
 

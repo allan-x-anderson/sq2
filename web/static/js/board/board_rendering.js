@@ -50,7 +50,7 @@ function welcomePlayers(connectedPlayers, joiningPlayers){
       $joiningContainer.removeClass('hide')
       $joiningContainer.addClass(`animated ${WELCOME_PLAYER_ANIMATION_CLASS}`)
       $joinedContainer.append(jdenticonSmall)
-      
+
       jdenticon()
       _welcomedPlayers.push(key)
       window.welcomePlayer = setTimeout(()=>{
@@ -222,9 +222,9 @@ function updateTileSize(numPlayers) {
   })
 }
 
-function renderTiles(tiles, maxTiles, containerSelector, withJendicon) {
+function renderTiles(tiles, maxTiles, containerSelector, opts) {
   let tileEls = tiles.map( tile => {
-    return renderTile(tile, maxTiles, withJendicon)
+    return renderTile(tile, maxTiles, opts.jdenticon_opts)
   })
   $(containerSelector).html(tileEls)
 }

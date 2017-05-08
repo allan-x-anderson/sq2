@@ -24,6 +24,13 @@ $board-height: 120px;
       color: #000;
       font-weight: bold;
       float: left;
+      .board-name {
+        opacity: 0.2;
+        &.active-board-true {
+          opacity: 1;
+        }
+        padding: 0 10px;
+      }
     }
     .game-bar-right {
       width: 30%;
@@ -62,9 +69,6 @@ $board-height: 120px;
   z-index: 100;
   text-align: center;
   width: 50%;
-  -webkit-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
-  -moz-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
-  box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
   img {
     width: 80%;
     height: auto;
@@ -78,6 +82,9 @@ $board-height: 120px;
   text-align: center;
   padding: 1em;
   background: #ccc;
+  -webkit-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
+  -moz-box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
+  box-shadow: 0px 0px 192px 0px rgba(0,0,0,0.74);
   &.long-press {
     border-top: dashed 3px #000;
     border-bottom: dashed 3px #000;
