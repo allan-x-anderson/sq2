@@ -49,7 +49,12 @@ defmodule Sq2.AdminController do
   def check_goals(players, board_type, matches) do
     case board_type do
       "fake_news" ->
-        players = Enum.filter(players, fn(p)-> p.role.name == "breibarter" end)
+        players_to_update =
+          Enum.filter(players, fn(p)-> p.role.name == "breibarter" end)
+          |> Enum.each(fn(p)->
+            changeset = Player.changeset(p, %{achieved_goals_for: Enum.uniq(p.achieved_goals_for ++ ["breibarter"])})
+            Repo.update(changeset)
+          end)
         IO.puts "OLALSLFLFASFADLFALASFLASFLFAFASLFASDLFASD"
         IO.inspect matches
       "democracy" ->
@@ -62,8 +67,12 @@ defmodule Sq2.AdminController do
         other_result = length(Enum.filter(match_counts, fn({_k, v})-> v == max_val end)) > 1
         case other_result do
           false ->
-            players = Enum.filter(players, fn(p)-> p.role.name == "citizen-" <> max_key end)
-            # TODO update the players create filed, acchieved goals for: add role name to it.
+            players_to_update =
+              Enum.filter(players, fn(p)-> p.role.name == "citizen-" <> max_key end)
+              |> Enum.each(fn(p)->
+                changeset = Player.changeset(p, %{achieved_goals_for: Enum.uniq(p.achieved_goals_for ++ ["citizen-" <> max_key])})
+                Repo.update(changeset)
+              end)
           true ->
             nil
           end

@@ -23,10 +23,10 @@ defmodule Sq2.RoleAssigner do
 
   def find_role(roles, players) do
     roles_percentage_filled_difference_from_max = Enum.map(roles, fn(role)->
-      IO.puts "POP: "
-      IO.puts role.percentage_of_players
-      IO.puts "- PIR:"
-      IO.puts percentage_of_players_in_role(role, players)
+      # IO.puts "POP: "
+      # IO.puts role.percentage_of_players
+      # IO.puts "- PIR:"
+      # IO.puts percentage_of_players_in_role(role, players)
       %{ role: role, percent_filled: role.percentage_of_players - percentage_of_players_in_role(role, players) }
     end)
     Enum.max_by(roles_percentage_filled_difference_from_max, fn(rp)-> rp.percent_filled end).role

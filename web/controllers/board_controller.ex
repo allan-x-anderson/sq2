@@ -32,7 +32,7 @@ defmodule Sq2.BoardController do
 
   def player_from_repo(player) do
     %{ "player" =>
-      %{ "id" => player.id, "board_id" => player.board_id, "name" => player.name, "role" => player.role.name}
+      %{ "id" => player.id, "board_id" => player.board_id, "name" => player.name, "role" => player.role.name, "achieved_goals_for" => player.achieved_goals_for}
     }
   end
 

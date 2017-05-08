@@ -11,6 +11,7 @@ import {
  BLOCKED_DATA,
  BOARD_TYPE_DATA,
  ROLE_INTRO_DATA,
+ ACHIEVMENT_AWARDS,
  DEV_DISABLE_ROLE_BLOCK,
  TILE_WIDTH,
  TILE_HEIGHT,
@@ -285,8 +286,56 @@ function renderPlayerTiles (currentPlayer, board) {
   console.log(tileEls);
 }
 
-function changeBoard(board_id) {
+function specialTileClicked(e, player, channel) {
+  let $tileEl = $(e.currentTarget);
+  let achievementType = $tileEl.data('type')
+  var audio = new Audio(`/audio/special_tiles/${achievementType}.mp3`);
+  audio.play();
+  let tile = {
+    type: achievementType,
+    player: player
+  }
+  $('.achievement-tile').off('click')
+  $('.achievement-tile').css({opacity: 0.5})
+  $('.achievement-tile').prepend($(`<div class='loader'></div>`))
+  $('.achievement-tile img').addClass('hide')
+  channel.push('achievements:tile-pressed', {tile: tile})
+  window.unblockSpecialTileClick = setTimeout(()=>{
+    $('.achievement-tile').on('click', (e)=> specialTileClicked(e, player, channel))
+    $('.achievement-tile').css({opacity: 1})
+    $('.achievement-tile .loader').remove()
+    $('.achievement-tile img').removeClass('hide')
+  }, 5000)
+}
 
+function showSpecialTiles(player, channel) {
+  let $el = $('#achievement-tiles-tray')
+  let $showEl = $('.open-achievement-tiles')
+  $showEl.addClass('hide')
+  $el.addClass('hide')
+  let specialTiles = []
+  let wonDemocracyRound = _.intersection(['citizen-red', 'citizen-green', 'citizen-blue', 'citizen-yellow'], player.achieved_goals_for).length > 0
+  let wonFakeNewsRound = _.intersection(['breibarter'], player.achieved_goals_for).length > 0
+  if (wonDemocracyRound || wonFakeNewsRound) {
+    _.each(player.achieved_goals_for, (role)=> {
+      specialTiles.push(ACHIEVMENT_AWARDS[role].tileHtml)
+    })
+  }
+  if(!_.isEmpty(specialTiles)){
+    console.log("SHOW");
+    $el.removeClass('hide')
+    $el.html(specialTiles.join(''))
+    $el.append($(`<div class='close-achievement-tiles'>&times;</div>`))
+    $('.achievement-tile').on('click', (e)=> specialTileClicked(e, player, channel))
+    $showEl.on('click', (e)=> {
+      $el.removeClass('hide')
+      $showEl.addClass('hide')
+    })
+    $('.close-achievement-tiles').on('click', (e)=>{
+      $el.addClass('hide')
+      $showEl.removeClass('hide')
+    })
+  }
 }
 
 export function initPlayer(gameChannel, boardChannel) {
@@ -304,6 +353,11 @@ export function initPlayer(gameChannel, boardChannel) {
   initListeners(boardChannel, board, currentPlayer)
   console.log($('#connected-players-count'));
   showRoleIntro(currentPlayer, $('#connected-players-count').data('count'))
+
+  if(!_.isEmpty(currentPlayer.achieved_goals_for)) {
+    showSpecialTiles(currentPlayer, boardChannel)
+  }
+
   gameChannel.on("board:changed", payload => {
     const token = getParameterByName("token")
     window.location.replace(`/${payload.board_slug}?token=${token}&player_id=${currentPlayer.id}`)

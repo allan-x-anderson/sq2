@@ -72,6 +72,11 @@ defmodule Sq2.BoardChannel do
     end
   end
 
+  def handle_in("achievements:tile-pressed", %{"tile" => tile}, socket) do
+    broadcast! socket, "achievements:tile-pressed", %{"tile" => tile}
+    {:noreply, socket}
+  end
+
   def handle_out("tile-pressed", payload, socket) do
     push socket, "tile-pressed", payload
     {:noreply, socket}
@@ -99,6 +104,11 @@ defmodule Sq2.BoardChannel do
 
   def handle_out("matches:new-match", payload, socket) do
     push socket, "matches:new-match", payload
+    {:noreply, socket}
+  end
+
+  def handle_out("achievements:tile-pressed", payload, socket) do
+    push socket, "achievements:tile-pressed", payload
     {:noreply, socket}
   end
 

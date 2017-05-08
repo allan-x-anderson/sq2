@@ -4,6 +4,7 @@ import { checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPress
 import { alreadyMatched } from "./tile_matching"
 import { checkBoardTypeEvents } from "./board_type_events_emissions"
 import { percentageOfVotesPerTile, setVoteBarWidths, voteResults, renderResult } from "./board_types/democracy"
+import { createJdenticon } from "../utils/utils"
 import boardRenderer from "./board_rendering"
 import moment from 'moment'
 
@@ -86,6 +87,16 @@ function initListeners(channel, board) {
     if(board.type == "lobby"){
       boardRenderer.welcomePlayers(board.connectedPlayers, diff.joins)
     }
+  })
+
+  channel.on('achievements:tile-pressed', ({tile: tile}) => {
+    let $carEl = $(`<div class="special-tile-flare sweep-right">${createJdenticon(tile.player.name, 50)}<img src='/images/special_tiles/${tile.type}.png'/></div>`)
+    $('body').append($carEl)
+    jdenticon()
+    window.carAnimationTimeout = setTimeout(()=> {
+      $carEl.remove()
+    }, 7000)
+    console.log(tile)
   })
 
   channel.on('matches:new-match', ({match: match}) => {

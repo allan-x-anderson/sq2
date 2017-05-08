@@ -61,6 +61,29 @@ export const BOARD_TYPE_DATA = {
   }
 }
 
+let democracyTile = `<div class='achievement-tile achievement-tile-democracy' data-type='democracy'>
+                      <img src='/images/special_tiles/democracy.png' />
+                    </div>`
+export const ACHIEVMENT_AWARDS = {
+  "citizen-red": {
+    tileHtml: democracyTile
+  },
+  "citizen-blue": {
+    tileHtml: democracyTile
+  },
+  "citizen-green": {
+    tileHtml: democracyTile
+  },
+  "citizen-yellow": {
+    tileHtml: democracyTile
+  },
+  "breibarter": {
+    tileHtml: `<div class='achievement-tile achievement-tile-breibarter' data-type='breibarter'>
+                <img src='/images/special_tiles/breibarter.png' />
+              </div>`
+  }
+}
+
 export const ROLE_INTRO_DATA = {
   "breibarter": {
     img: 'breibarter.jpg',

@@ -13,6 +13,10 @@
 <div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= Poison.encode! @current_presences %>"></div>
 <div style="display:none" id="current-board" data-board="<%= Poison.encode! @board %>"></div>
 <section id="player-hand"></section>
+<div class="open-achievement-tiles" class="hide">
+</div>
+<section id="achievement-tiles-tray" class="hide">
+</section>
 
 <div class="block-play-timer hide">
   <div class="timer">

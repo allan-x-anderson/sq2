@@ -3,6 +3,7 @@ defmodule Sq2.Player do
 
   schema "players" do
     field :name, :string
+    field :achieved_goals_for, {:array, :string}
     belongs_to :role, Sq2.Role
     belongs_to :board, Sq2.Board
     belongs_to :game, Sq2.Game
@@ -15,7 +16,7 @@ defmodule Sq2.Player do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :role_id, :board_id, :game_id])
+    |> cast(params, [:name, :role_id, :board_id, :game_id, :achieved_goals_for])
     |> validate_required([:name, :game_id])
   end
 end
