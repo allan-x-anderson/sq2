@@ -12,7 +12,6 @@ import {
  BOARD_TYPE_DATA,
  ROLE_INTRO_DATA,
  ACHIEVMENT_AWARDS,
- DEV_DISABLE_ROLE_BLOCK,
  TILE_WIDTH,
  TILE_HEIGHT,
  LONG_PRESS_INTERVAL,
@@ -24,14 +23,21 @@ import {
  TILE_PRESS_DEBOUNCE_DURATION
 } from './player_constants'
 
+import {
+  DEV_DISABLE_ROLE_BLOCK,
+  DEV_DISABLE_DEBOUNCE_BLOCK,
+} from '../constants'
+
 let pressStartEvent = deviceHasTouchEvents() ? 'touchstart' : 'mousedown'
 let pressEndEvent = deviceHasTouchEvents() ? 'touchend' : 'mouseup'
 
-function showRoleIntro(player, playerCount){
+function showRoleIntro(player, playerCount, board){
   let roleIntroData = ROLE_INTRO_DATA[player.role]
   if (roleIntroData) {
+    let $showEl = $('.open-role-info')
     let $el = $('.modal-role-intro')
     $el.removeClass('hide')
+    $showEl.removeClass('hide')
     $el.find('.j-filled-content').html(roleIntroData.html)
     let roleIntroImage = $(`<img src='/images/role_intros/${roleIntroData.img}' />`)
     $el.find('.j-filled-content .role-intro-image').html(roleIntroImage)
@@ -40,6 +46,18 @@ function showRoleIntro(player, playerCount){
       $el.addClass('hide')
       $el.find('.j-button-close').off('click')
       $(window).scrollTop();
+    })
+    $showEl.on('click', (e)=> {
+      console.log(player, $('#connected-players-count').data('count'));
+      showRoleIntro(player, $('#connected-players-count').data('count'))
+      fillAsciiTilesDivs(undefined, $('#connected-players-count').data('count'))
+      // $el.removeClass('hide')
+      // $(window).scrollTop();
+      // $el.find('.j-button-close').on('click', ()=> {
+      //   $el.addClass('hide')
+      //   $el.find('.j-button-close').off('click')
+      //   $(window).scrollTop();
+      // })
     })
   }
 }
@@ -243,22 +261,23 @@ function initListeners(channel, board, currentPlayer) {
           block(currentPlayer, board.connectedPlayersCount);
         }
       } else {
-        //Standard one second blocker
-        $('.block-play-timer').removeClass('hide')
-        $('.block-play-timer').css({opacity: 0.7})
-        window.blockPlayDebouncerAnimation = setInterval(()=>{
-          let asciiTile = `<span class='ascii-tiles'><span class='ascii-tile ascii-tile-${_.sample(['blue', 'red', 'green', 'yellow'])}'>&#9632;</span></span>`
-          $('.block-play-timer .timer').append(asciiTile)
-        }, 30)
-        window.blockPlayDebouncerAnimateOut = setTimeout(()=> {
-          $('.block-play-timer').css({opacity: 0})
-        }, 1700)
+        if(!DEV_DISABLE_DEBOUNCE_BLOCK){
+          $('.block-play-timer').removeClass('hide')
+          $('.block-play-timer').css({opacity: 0.7})
+          window.blockPlayDebouncerAnimation = setInterval(()=>{
+            let asciiTile = `<span class='ascii-tiles'><span class='ascii-tile ascii-tile-${_.sample(['blue', 'red', 'green', 'yellow'])}'>&#9632;</span></span>`
+            $('.block-play-timer .timer').append(asciiTile)
+          }, 30)
+          window.blockPlayDebouncerAnimateOut = setTimeout(()=> {
+            $('.block-play-timer').css({opacity: 0})
+          }, 1700)
 
-        window.blockPlayDebouncer = setTimeout(()=> {
-          $('.block-play-timer').addClass('hide')
-          $('.block-play-timer .timer').html('')
-          window.clearInterval(window.blockPlayDebouncerAnimation)
-        }, TILE_PRESS_DEBOUNCE_DURATION)
+          window.blockPlayDebouncer = setTimeout(()=> {
+            $('.block-play-timer').addClass('hide')
+            $('.block-play-timer .timer').html('')
+            window.clearInterval(window.blockPlayDebouncerAnimation)
+          }, TILE_PRESS_DEBOUNCE_DURATION)
+        }
       }
       window.clicked = undefined
     }
@@ -298,14 +317,14 @@ function specialTileClicked(e, player, channel) {
   $('.achievement-tile').off('click')
   $('.achievement-tile').css({opacity: 0.5})
   $('.achievement-tile').prepend($(`<div class='loader'></div>`))
-  $('.achievement-tile img').addClass('hide')
+  $('.achievement-tile img').css({opacity: 0})
   channel.push('achievements:tile-pressed', {tile: tile})
   window.unblockSpecialTileClick = setTimeout(()=>{
     $('.achievement-tile').on('click', (e)=> specialTileClicked(e, player, channel))
     $('.achievement-tile').css({opacity: 1})
     $('.achievement-tile .loader').remove()
-    $('.achievement-tile img').removeClass('hide')
-  }, 5000)
+    $('.achievement-tile img').css({opacity: 1})
+  }, 10000)
 }
 
 function showSpecialTiles(player, channel) {

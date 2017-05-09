@@ -26,12 +26,12 @@ export const BLOCKED_DATA = {
     tiles_whitelist: ['blue']
   },
   'middle_class': {
-    percentage_of_turns: 0.5,
+    percentage_of_turns: 0.75,
     message: 'You go to your office',
     tiles_whitelist: ['blue', 'yellow']
   },
   'rich': {
-    percentage_of_turns: 0.25,
+    percentage_of_turns: 0.5,
     message: 'You have a meeting with your finanacial planner',
     tiles_whitelist: ['blue', 'red', 'yellow', 'green']
   },
@@ -125,9 +125,6 @@ export const ROLE_INTRO_DATA = {
            `
   },
 }
-
-export const DEV_DISABLE_ROLE_BLOCK = false;
-
 
 export const TILE_WIDTH = $('.tile').first().outerWidth();
 export const TILE_HEIGHT = $('.tile').first().outerHeight();

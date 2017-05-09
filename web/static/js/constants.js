@@ -1,3 +1,8 @@
+/* DEV */
+export const DEV_DISABLE_ROLE_BLOCK = false;
+export const DEV_DISABLE_DEBOUNCE_BLOCK = true;
+/* END DEV */
+
 /* TILE MATCHING */
 
 export const CONSIDER_GROUPED_WITHIN_MS = 1000;

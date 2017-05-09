@@ -73,6 +73,8 @@
   </div>
 </div>
 
+<div class="open-role-info hide">
+</div>
 <div class="modal modal-role-intro hide">
   <div class="modal-content">
     <div class='j-filled-content'></div>
