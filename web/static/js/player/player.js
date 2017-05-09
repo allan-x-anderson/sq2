@@ -309,6 +309,7 @@ function specialTileClicked(e, player, channel) {
 }
 
 function showSpecialTiles(player, channel) {
+  console.log(player)
   let $el = $('#achievement-tiles-tray')
   let $showEl = $('.open-achievement-tiles')
   $showEl.addClass('hide')
@@ -362,4 +363,9 @@ export function initPlayer(gameChannel, boardChannel) {
     const token = getParameterByName("token")
     window.location.replace(`/${payload.board_slug}?token=${token}&player_id=${currentPlayer.id}`)
   })
+
+  if(board.type === 'lobby'){
+    $('.big-player-jdenticon').html(createJdenticon(currentPlayer.name, 300))
+    jdenticon()
+  }
 }

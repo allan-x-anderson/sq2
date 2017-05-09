@@ -12,8 +12,19 @@
 </section>
 <div style="display:none" id="current-player" data-current-player="<%= Poison.encode! @player %>" data-initial-presences="<%= Poison.encode! @current_presences %>"></div>
 <div style="display:none" id="current-board" data-board="<%= Poison.encode! @board %>"></div>
-<section id="player-hand"></section>
-<div class="open-achievement-tiles" class="hide">
+<section id="player-hand">
+  <%= if @board["board"]["type"] == "lobby" do %>
+    <section class="player-waiting">
+      <h1>Wecome: </h1>
+      <div class='big-player-jdenticon'>
+
+      </div>
+      <p>Waiting for other players...</p>
+    </section>
+  <% end %>
+</section>
+
+<div class="open-achievement-tiles hide">
 </div>
 <section id="achievement-tiles-tray" class="hide">
 </section>

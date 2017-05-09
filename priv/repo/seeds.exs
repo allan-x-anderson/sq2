@@ -65,3 +65,8 @@ board_5_roles = [
   %{name: "citizen-green", percentage_of_players: 20}
 ]
 board_5 = Sq2.SeedsHelper.build_board(game, "Chapter 4", "democracy", board_5_roles, false)
+
+board_6_roles = [
+  %{name: "citizen", percentage_of_players: 100}
+]
+board_6 = Sq2.SeedsHelper.build_board(game, "Chapter 5", "anarchy", board_6_roles, false)

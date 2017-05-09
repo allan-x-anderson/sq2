@@ -8,7 +8,7 @@ export function randomInt (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 export function createJdenticon(toHash, xy) {
-  return `<canvas width='${xy}' height=${xy} data-jdenticon-hash='${SparkMD5.hash(toHash)}'></canvas>`
+  return `<canvas width='${xy}' height='${xy}' data-jdenticon-hash='${SparkMD5.hash(toHash)}'></canvas>`
 }
 
 export function getParameterByName(name, url) {

@@ -75,6 +75,19 @@ main {
   border-radius: 4px;
 }
 
+.player-waiting {
+  padding: 2em;
+  text-align: center;
+  background: $ta-camo-green-light;
+  height: 100%;
+  .big-player-jdenticon {
+    padding: 10px;
+    width: 320px;
+    background: $ta-blue-dark;
+    margin: 0 auto;
+  }
+}
+
 .lobby {
   .lobby-welcome {
     width: 50%;

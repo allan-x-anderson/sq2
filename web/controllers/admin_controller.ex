@@ -55,8 +55,6 @@ defmodule Sq2.AdminController do
             changeset = Player.changeset(p, %{achieved_goals_for: Enum.uniq(p.achieved_goals_for ++ ["breibarter"])})
             Repo.update(changeset)
           end)
-        IO.puts "OLALSLFLFASFADLFALASFLASFLFAFASLFASDLFASD"
-        IO.inspect matches
       "democracy" ->
         match_counts =
           matches
