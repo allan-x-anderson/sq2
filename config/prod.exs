@@ -13,7 +13,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :sq2, Sq2.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com", port: 80],
+  url: [host: "wt.instantiate.me", port: 80],
   cache_static_manifest: "priv/static/manifest.json"
 
 # Do not print debug messages in production
