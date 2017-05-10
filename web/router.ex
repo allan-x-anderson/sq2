@@ -20,7 +20,7 @@ defmodule Sq2.Router do
   scope "/", Sq2 do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", GameController, :join
     get "/boards/:board_slug", BoardController, :display
     get "/admin", AdminController, :index
     get "/admin/supervise_game/:game_id", AdminController, :supervise_game

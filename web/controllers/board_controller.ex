@@ -36,6 +36,10 @@ defmodule Sq2.BoardController do
     }
   end
 
+
+  def play(conn, %{"board_slug" => nil, "player_id" => nil} = params) do
+    redirect conn, to: "join"
+  end
   def play(conn, %{"board_slug" => slug, "player_id" => player_id} = params) do
     player = Repo.get!(Player, player_id)
             |> Repo.preload([:role])
