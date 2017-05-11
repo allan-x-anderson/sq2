@@ -1,6 +1,6 @@
-/* DEV */
+
 export const DEV_DISABLE_ROLE_BLOCK = false;
-export const DEV_DISABLE_DEBOUNCE_BLOCK = true;
+export const DEV_DISABLE_DEBOUNCE_BLOCK = false;
 /* END DEV */
 
 /* TILE MATCHING */
