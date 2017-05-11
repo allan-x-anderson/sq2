@@ -8,7 +8,7 @@
   background-color: transparent;
   animation-duration: 6s;
   animation-timing-function: ease-in;
-  animation-delay: 2s;
+  animation-delay: 1s;
   animation-name: goRight;
   animation-iteration-count: 1;
 }
@@ -19,6 +19,6 @@
   }
 
   to {
-    transform: translate(1920px,0);
+    transform: translate(3920px,0);
   }
 }

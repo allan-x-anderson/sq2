@@ -18,6 +18,8 @@
       <section id="match-hero" class="hide">
 
       </section>
+      <section class="board-infos hide">
+      </section>
       <%= if @board["board"]["type"] == "democracy" do %>
         <%= render "_voting_bar.html" %>
       <% end %>

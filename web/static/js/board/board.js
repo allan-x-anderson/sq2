@@ -1,5 +1,5 @@
 import { Presence } from "phoenix"
-import { MATCH_ANIMATION_TIME } from './board_constants'
+import { MATCH_ANIMATION_TIME, BOARD_TYPE_INFOS } from './board_constants'
 import { checkMatch, tilesPressedWithinTimeframe, matchPressDuration, matchPressedWithinTimeframe } from "./tile_matching"
 import { alreadyMatched } from "./tile_matching"
 import { checkBoardTypeEvents } from "./board_type_events_emissions"
@@ -104,6 +104,7 @@ function initListeners(channel, board) {
     let points = $el.data('points')
     $el.find('.game-bar-points-number').html(points + match.points)
     $el.data('points', points + match.points)
+    $('.board-infos').addClass('hide')
   })
 
   channel.on("tile-pressed", payload => {
@@ -228,6 +229,13 @@ export function initBoard(gameChannel, boardChannel) {
 
   boardRenderer.updateTileSize(board.connectedPlayersCount)
   boardRenderer.renderTotalPoints(board.points)
+
+  if (BOARD_TYPE_INFOS[board.type]) {
+    const $el = $('.board-infos')
+    $el.removeClass('hide')
+    $el.html(BOARD_TYPE_INFOS[board.type].html)
+  }
+  
   initListeners(boardChannel, board)
   gameChannel.on("board:changed", payload => {
     window.location.replace(`/boards/${payload.board_slug}`)

@@ -27,6 +27,12 @@ export const MATCH_HERO_IMAGES = {
   alternating_colors_yellow_blue: "europe-space-night"
 }
 
+export const BOARD_TYPE_INFOS = {
+  'inequality': {
+    html: `<p>Tip: You can repeat matches from previous rounds.</p>`
+  }
+}
+
 export const BOARD_TYPE_EVENTS = {
   'fake_news': {
     'fake-news-published': {

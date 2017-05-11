@@ -6,7 +6,7 @@
     <span class='ascii-tiles'><span class='ascii-tile ascii-tile-green'>&#9632;</span></span>
     <span class='ascii-tiles'><span class='ascii-tile ascii-tile-yellow'>&#9632;</span></span>
     <p>
-      Please sign in at: <em>teiling.instantiate.me</em>
+      Please sign in at: <em>wt.instantiate.me</em>
     </p>
     <p>
       The game name is: <strong><%= @game.slug %></strong>
