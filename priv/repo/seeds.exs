@@ -86,35 +86,35 @@ IO.inspect game
 board_1_roles = [
   %{name: "player", percentage_of_players: 100}
 ]
-board_1 = Sq2.SeedsHelper.build_board(game, "Lobby", "lobby", board_1_roles, true)
+board_1 = Sq2.SeedsHelper.build_board(game, "dev-Lobby", "lobby", board_1_roles, true)
 
 board_2_roles = [
   %{name: "citizen", percentage_of_players: 100}
 ]
-board_2 = Sq2.SeedsHelper.build_board(game, "Chapter 1", "anarchy", board_2_roles, false)
+board_2 = Sq2.SeedsHelper.build_board(game, "dev-Chapter 1", "anarchy", board_2_roles, false)
 
 board_3_roles = [
   %{name: "rich", percentage_of_players: 15},
   %{name: "poor", percentage_of_players: 25},
   %{name: "middle_class", percentage_of_players: 60}
 ]
-board_3 = Sq2.SeedsHelper.build_board(game, "Chapter 2", "inequality", board_3_roles, false)
+board_3 = Sq2.SeedsHelper.build_board(game, "dev-Chapter 2", "inequality", board_3_roles, false)
 
 board_4_roles = [
   %{name: "citizen", percentage_of_players: 60},
   %{name: "breibarter", percentage_of_players: 10},
   %{name: "researcher", percentage_of_players: 30}
 ]
-board_4 = Sq2.SeedsHelper.build_board(game, "Chapter 3", "fake_news", board_4_roles, false)
+board_4 = Sq2.SeedsHelper.build_board(game, "dev-Chapter 3", "fake_news", board_4_roles, false)
 
 board_5_roles = [
   %{name: "citizen-red", percentage_of_players: 40},
   %{name: "citizen-blue", percentage_of_players: 40},
   %{name: "citizen-green", percentage_of_players: 20}
 ]
-board_5 = Sq2.SeedsHelper.build_board(game, "Chapter 4", "democracy", board_5_roles, false)
+board_5 = Sq2.SeedsHelper.build_board(game, "dev-Chapter 4", "democracy", board_5_roles, false)
 
 board_6_roles = [
   %{name: "citizen", percentage_of_players: 100}
 ]
-board_6 = Sq2.SeedsHelper.build_board(game, "Chapter 5", "anarchy", board_6_roles, false)
+board_6 = Sq2.SeedsHelper.build_board(game, "dev-Chapter 5", "anarchy", board_6_roles, false)
